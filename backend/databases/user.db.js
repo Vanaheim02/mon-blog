@@ -8,7 +8,7 @@ const UserDb = {
       VALUES (?, ?);
     `;
 
-        const result = await Database(query, [user_mail, user_password]);
+        const result = await db(query, [user_mail, user_password]);
         return result;
     },
 
@@ -22,7 +22,7 @@ const UserDb = {
 				user_mail = ?
 		;`;
 
-        const result = await Database(query, [user_mail]);
+        const result = await db(query, [user_mail]);
         if (typeof result[0] !== 'undefined')
             return false;
 
@@ -36,7 +36,7 @@ const UserDb = {
 			WHERE user_mail = ?
 		;`;
 
-        const result = await Database(query, [user_mail]);
+        const result = await db(query, [user_mail]);
 
         if (typeof result[0] !== 'undefined')
             return result[0];
@@ -50,7 +50,7 @@ const UserDb = {
 			WHERE id_user = ?
 		;`;
 
-        const result = await Database(query, [hashedPassword, id_user]);
+        const result = await db(query, [hashedPassword, id_user]);
         return result;
     },
 
@@ -67,7 +67,7 @@ const UserDb = {
 			WHERE id_user = ?;
 		`;
 
-        const result = await Database(query, [id_user]);
+        const result = await db(query, [id_user]);
         return result;
     },
 
@@ -85,7 +85,7 @@ const UserDb = {
 			WHERE id_user = ?;
 		`;
 
-        const result = await Database(query, [id_user]);
+        const result = await db(query, [id_user]);
 
         // Retourne le premier utilisateur trouvé, ou false
         if (typeof result[0] !== 'undefined')
