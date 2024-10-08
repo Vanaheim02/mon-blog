@@ -3,7 +3,7 @@ import query from "../Databases/init.db";
 // Fonction middleware pour vérifier si l'utilisateur est un administrateur
 const checkAdmin = async (req, res, next) => {
     // Récupération de l'ID de l'utilisateur depuis la requête
-    const user_Id = req.body.user_Id;
+    const id_user = req.body.id_user;
 
     // Requête SQL pour récupérer le rôle de l'utilisateur dans la base de données
     const userSql = `
@@ -13,7 +13,7 @@ const checkAdmin = async (req, res, next) => {
   `;
 
     // Exécution de la requête SQL pour obtenir les informations sur l'utilisateur
-    const userRes = await query(userSql, [user_Id]);
+    const userRes = await query(userSql, [id_user]);
 
     // Extraction du premier utilisateur trouvé dans le résultat
     const user = userRes[0];
@@ -33,11 +33,11 @@ const checkAdmin = async (req, res, next) => {
     next();
 };
 const promoteToAdmin = async (req, res) => {
-    const { user_Id } = req.params;
+    const { id_user } = req.params;
 
     try {
         // Vérifier si l'utilisateur existe
-        const user = await UsersDB.getUserById(user_Id);
+        const user = await UsersDB.getUserById(id_user);
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -48,10 +48,10 @@ const promoteToAdmin = async (req, res) => {
         }
 
         // Mettre à jour le rôle de l'utilisateur en administrateur dans la base de données
-        await UsersDB.promotToAdmin(user_Id);
+        await UsersDB.promotToAdmin(id_user);
 
         console.log('User promoted to admin successfully.');
-        return res.status(200).json({ message: `User with ID ${user_Id} promoted to admin` });
+        return res.status(200).json({ message: `User with ID ${id_user} promoted to admin` });
     }
     catch (error) {
         console.error('Error promoting user to admin: ', error);

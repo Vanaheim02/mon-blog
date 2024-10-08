@@ -4,21 +4,21 @@ import { hashPass, compareHash } from "../utils/crypto.utils.js";
 import { UserDb } from "../Databases/user.db.js";
 import { jwtSign } from "../middlewares/jwt.mdlwr.js";
 
-// Fonction de création d'un utilisateur
+// Création d'un utilisateur
 const createUser = async (req, res) => {
     const { mail, password, passwordConfirm } = req.body;
 
-    // Vérifier la validité de l'email
-    //if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !/[A-Z]/.test(email) || !/[!@#$%^&*(),.?":{}|<>]/.test(email))
+    // Vérifie si l'adresse mail est valide
+
     if (!mail || !isEmail(mail)) {
-        return res.status(400).json({ message: `Invalid email !` });
+        return res.status(400).json({ message: `Email invalide !` });
     }
 
     // Vérifier la longueur du mot de passe
     if (!password || password.length <= 8) {
         return res
             .status(400)
-            .json({ message: `Password must have at least 9 characters` });
+            .json({ message: `Le mot de passe doit avoir huit caractères` });
     }
 
     if (password !== passwordConfirm)
@@ -55,7 +55,6 @@ const login = async (req, res) => {
     try {
         const { mail, password } = req.body;
 
-        // Ajoutez ici des vérifications supplémentaires si nécessaire
         // Vérifier la validité de l'email
         if (!mail || !isEmail(mail)) {
             return res.status(403).json({ message: `Invalid email` });
@@ -65,8 +64,7 @@ const login = async (req, res) => {
             return res.status(403).json({ message: `Invalid password` });
         }
 
-        // Recherchez l'utilisateur dans la base de données (simulation)
-        // Remplacez cette logique par une vérification réelle de l'identité de l'utilisateur
+
         const response = await UserDb.signIn(mail);
 
         if (!response)
@@ -92,7 +90,6 @@ const login = async (req, res) => {
         res.status(500).json({ error: "Erreur lors de la connexion de l'utilisateur." });
     }
 };
-// Change password
 // Fonction pour que l'utilisateur puisse changer de mot de passe
 
 
@@ -131,7 +128,7 @@ const updatePassword = async (request, response) => {
 }
 
 
-// delete user
+
 // Fonction de suppression d'un utilisateur
 const deleteUser = async (request, response) => {
     const userId = request.body.userId
@@ -155,51 +152,6 @@ const deleteUser = async (request, response) => {
     }
 };
 
-// Contrôleur pour récupérer la liste personnelle de jeux d'un utilisateur
-const getMyList = async (req, res) => {
-    try {
-        // Supposons que vous avez un middleware d'authentification qui place les informations de l'utilisateur dans req.user
-        const userId = req.user.id;
-
-        // Logique pour récupérer la liste personnelle de jeux de l'utilisateur depuis la base de données
-        const myList = await UserDb.getMyList(userId);
-
-        res.status(200).json(myList);
-    } catch (err) {
-        console.error("Erreur dans le contrôleur getMyList :", err);
-        res.status(500).json({ error: "Erreur serveur." });
-    }
-};
-
-// Contrôleur pour ajouter un jeu à la liste de l'utilisateur
-const addToMyList = async (req, res) => {
-    try {
-        const { userId, gameId, platformId } = req.body; // Supposons que les données nécessaires sont incluses dans le corps de la requête
-
-        // Logique pour ajouter le jeu à la liste personnelle de jeux de l'utilisateur dans la base de données
-        const result = await UserDb.addToMyList(userId, gameId, platformId);
-
-        res.status(200).json({ success: true, message: "Jeu ajouté à la liste personnelle." });
-    } catch (err) {
-        console.error("Erreur dans le contrôleur addToMyList :", err);
-        res.status(500).json({ error: "Erreur serveur." });
-    }
-};
-
-// Contrôleur pour supprimer un jeu de la liste de l'utilisateur
-const removeFromMyList = async (req, res) => {
-    try {
-        const { userId, gameId, platformId } = req.body; // Supposons que les données nécessaires sont incluses dans le corps de la requête
-
-        // Logique pour supprimer le jeu de la liste personnelle de jeux de l'utilisateur dans la base de données
-        const result = await UserDb.removeFromMyList(userId, gameId, platformId);
-
-        res.status(200).json({ success: true, message: "Jeu supprimé de la liste personnelle." });
-    } catch (err) {
-        console.error("Erreur dans le contrôleur removeFromMyList :", err);
-        res.status(500).json({ error: "Erreur serveur." });
-    }
-};
 
 const verifyPasswordLength = async (password, response) => {
     // Vérifier la longueur du mot de passe

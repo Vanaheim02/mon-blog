@@ -3,7 +3,7 @@ import { ArticleDb } from "../Databases/article.db";
 // Créer un nouvel article
 const createArticle = async (req, res) => {
     const { title, content, categories, tags } = req.body;
-    const userId = req.user.id; // On suppose que l'ID de l'utilisateur est stocké dans req.user
+    const userId = req.user.id;
 
     try {
         if (!title || !content) {

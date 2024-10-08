@@ -17,15 +17,6 @@ const initUserRoutes = (app) => {
     // Route pour supprimer un utilisateur (authentification requise)
     userRouter.delete('/deleteUser', jwtMdlwr, UsersController.deleteUser);
 
-    // Route pour récupérer la liste personnelle de jeux de l'utilisateur (authentification requise)
-    userRouter.get('/myList', jwtMdlwr, UsersController.getMyList);
-
-    // Route pour ajouter un jeu à la liste personnelle de l'utilisateur (authentification requise)
-    userRouter.post('/addToMyList', jwtMdlwr, UsersController.addToMyList);
-
-    // Route pour supprimer un jeu de la liste personnelle de l'utilisateur (authentification requise)
-    userRouter.delete('/removeFromMyList', jwtMdlwr, UsersController.removeFromMyList);
-
     // Monter le routeur sur l'application Express
     app.use('/users', userRouter);
 };

@@ -36,9 +36,4 @@ const deleteComment = async (req, res) => {
     }
 };
 
-// Export du contrôleur
-export const CommentController = {
-    createComment,
-    getCommentsByArticle,
-    deleteComment
-};
+export const CommentController = { createComment, getCommentsByArticle, deleteComment };

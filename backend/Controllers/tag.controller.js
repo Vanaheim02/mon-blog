@@ -32,4 +32,24 @@ const addTag = async (req, res) => {
     }
 };
 
-export const TagController = { getAllTags, addTag };
+
+const deleteTag = async (req, res) => {
+    const { id_tag } = req.params;
+
+    try {
+        const existingTag = await TagDb.findTagById(id_tag);
+
+        if (!existingTag) {
+            return res.status(404).json({ message: "Tag non trouvé." });
+        }
+
+        await TagDb.delete(id_tag);
+        res.status(200).json({ message: "Tag supprimé avec succès." });
+    } catch (error) {
+        console.error('Erreur lors de la suppression du tag : ', error);
+        res.status(500).json({ error: 'Erreur lors de la suppression du tag.' });
+    }
+};
+
+
+export const TagController = { getAllTags, addTag, deleteTag };

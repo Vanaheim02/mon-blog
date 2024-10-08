@@ -1,14 +1,14 @@
 import express from 'express';
-import initArticleRoutes from './Routes/article.routes.js';
+import initRoutes from './Routes/init.routes.js';
 import initMiddlewares from './middlewares/index.js';
 
 const app = express();
 
-// Initialise les middlewares
+
 initMiddlewares(app);
 
-// Initialise les routes
-initArticleRoutes(app);
+
+initRoutes(app);
 
 const PORT = process.env.PORT || 5173;
 app.listen(PORT, () => {
