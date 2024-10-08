@@ -1,8 +1,5 @@
-import isEmail from "validator/lib/isEmail.js";
-import { stringIsFilled } from "../utils/string.utils.js";
-import { hashPass, compareHash } from "../utils/crypto.utils.js";
-import { UserDb } from "../Databases/user.db.js";
-import { jwtSign } from "../middlewares/jwt.mdlwr.js";
+import { UserDb } from '../databases/user.db.js';
+import bcrypt from 'bcrypt';
 
 // Création d'un utilisateur
 const createUser = async (req, res) => {
@@ -160,4 +157,4 @@ const verifyPasswordLength = async (password, response) => {
 };
 
 // Exportez l'objet du contrôleur
-export const UsersController = { createUser, login, deleteUser, updatePassword, getMyList, addToMyList, removeFromMyList };
+export const UsersController = { createUser, login, deleteUser, updatePassword };

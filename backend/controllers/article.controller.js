@@ -1,4 +1,4 @@
-import { ArticleDb } from "../Databases/article.db";
+import ArticleDb from '../databases/article.db.js';
 
 // Créer un nouvel article
 const createArticle = async (req, res) => {

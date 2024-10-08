@@ -1,7 +1,5 @@
 import express from 'express';
-import jwtMdlwr from '../middlewares/jwt.mdlwr.js';
-import checkAdmin from "../Middlwares/check.admin.js";
-import { ArticleController } from '../Controllers/article.controller.js';
+import { ArticleController } from '../controllers/article.controller.js';
 
 const initArticleRoutes = (app) => {
     const articleRouter = express.Router();

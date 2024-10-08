@@ -1,4 +1,4 @@
-import { CommentDb } from "../Databases/comment.db"
+import CommentDb from '../databases/comment.db.js';
 
 // Fonctionnalités pour tous les utilisateurs
 const createComment = async (req, res) => {

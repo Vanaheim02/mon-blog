@@ -1,4 +1,4 @@
-import UserDB from "../databases/user.database.js";
+import UserDB from "../databases/user.db.js";
 
 // Vérifie si l'utilisateur est un administrateur
 const checkAdmin = async (req, res, next) => {

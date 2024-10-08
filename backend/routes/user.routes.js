@@ -1,6 +1,5 @@
 import express from 'express';
-import { UsersController } from '../Controllers/user.controller.js';
-import jwtMdlwr from '../middlewares/jwt.mdlwr.js'; // Middleware d'authentification JWT
+import { UsersController } from '../controllers/user.controller.js';
 
 const initUserRoutes = (app) => {
     const userRouter = express.Router();

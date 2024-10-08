@@ -1,4 +1,4 @@
-import Database from "./init.db.js";
+import db from './init.db.js';
 
 const UserDb = {
     // Méthode pour créer un nouvel utilisateur

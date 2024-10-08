@@ -1,6 +1,6 @@
-import Database from "./init.db.js";
+import db from './init.db.js';
 
-const ArticleDB = {
+const ArticleDb = {
 
     addArticle: async (req, res) => {
         const articleToAdd = req.body;
@@ -13,7 +13,7 @@ const ArticleDB = {
             const { article_name } = articleToAdd;
 
             // Créer un nouvel article
-            const newArticle = await Database.create(article_name); // Assurez-vous que `create` est une fonction valide dans `init.db.js`
+            const newArticle = await db.create(article_name); // Assurez-vous que `create` est une fonction valide dans `init.db.js`
 
             res.status(201).json({ message: "L'article a été ajouté avec succès", article: newArticle });
         } catch (error) {
@@ -24,7 +24,7 @@ const ArticleDB = {
 
     getAllArticles: async (req, res) => { // Correction de `getAllarticle`
         try {
-            const articles = await Database.readAll(); // Assurez-vous que `readAll` est une fonction valide dans `init.db.js`
+            const articles = await db.readAll(); // Assurez-vous que `readAll` est une fonction valide dans `init.db.js`
 
             res.status(200).json(articles);
         } catch (error) {
@@ -41,7 +41,7 @@ const ArticleDB = {
             const { article_name } = updatedArticle;
 
             // Mise à jour de l'article
-            await Database.update(id_article, article_name); // Assurez-vous que `update` est une fonction valide dans `init.db.js`
+            await db.update(id_article, article_name); // Assurez-vous que `update` est une fonction valide dans `init.db.js`
 
             res.status(200).json({ message: "L'article a été mis à jour avec succès." });
         } catch (error) {
@@ -55,7 +55,7 @@ const ArticleDB = {
 
         try {
             // Suppression de l'article
-            await Database.remove(id_article); // Assurez-vous que `remove` est une fonction valide dans `init.db.js`
+            await db.remove(id_article); // Assurez-vous que `remove` est une fonction valide dans `init.db.js`
 
             res.status(200).json({ message: "Article supprimé avec succès." });
         } catch (error) {
@@ -66,4 +66,4 @@ const ArticleDB = {
 };
 
 // Exportation de l'objet ArticleDB
-export default ArticleDB;
+export default ArticleDb;
