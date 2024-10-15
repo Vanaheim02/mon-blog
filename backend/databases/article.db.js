@@ -1,19 +1,17 @@
-import db from './init.db.js';
-
 const ArticleDb = {
 
     addArticle: async (req, res) => {
         const articleToAdd = req.body;
 
         try {
-            if (!articleToAdd || !articleToAdd.article_name) {
+            if (!articleToAdd || !articleToAdd.article_title) {
                 return res.status(400).json({ message: "Aucun article à ajouter" });
             }
 
-            const { article_name } = articleToAdd;
+            const { article_title, article_content, fk_id_author } = articleToAdd;
 
             // Créer un nouvel article
-            const newArticle = await db.create(article_name); // Assurez-vous que `create` est une fonction valide dans `init.db.js`
+            const newArticle = await db.create({ article_title, article_content, fk_id_author });
 
             res.status(201).json({ message: "L'article a été ajouté avec succès", article: newArticle });
         } catch (error) {
@@ -22,26 +20,25 @@ const ArticleDb = {
         }
     },
 
-    getAllArticles: async (req, res) => { // Correction de `getAllarticle`
+    getAllArticles: async (req, res) => {
         try {
-            const articles = await db.readAll(); // Assurez-vous que `readAll` est une fonction valide dans `init.db.js`
+            const articles = await db.readAll();
 
             res.status(200).json(articles);
         } catch (error) {
             console.error("Erreur lors de la récupération des articles :", error);
-            res.status(500).json({ error: "Erreur serveur" });
+            res.status(500).json({ error: "Erreur serveur lors de la récupération des articles." });
         }
     },
 
-    updateArticle: async (req, res) => { // Correction pour transformer `updateArticle` en fonction
+    updateArticle: async (req, res) => {
         const id_article = req.params.id;
-        const updatedArticle = req.body;
+        const update_at = req.body;
 
         try {
-            const { article_name } = updatedArticle;
+            const { article_title } = update_at;
 
-            // Mise à jour de l'article
-            await db.update(id_article, article_name); // Assurez-vous que `update` est une fonction valide dans `init.db.js`
+            await db.update(id_article, { article_title });
 
             res.status(200).json({ message: "L'article a été mis à jour avec succès." });
         } catch (error) {
@@ -54,8 +51,7 @@ const ArticleDb = {
         const id_article = req.params.id;
 
         try {
-            // Suppression de l'article
-            await db.remove(id_article); // Assurez-vous que `remove` est une fonction valide dans `init.db.js`
+            await db.remove(id_article);
 
             res.status(200).json({ message: "Article supprimé avec succès." });
         } catch (error) {
@@ -65,5 +61,5 @@ const ArticleDb = {
     }
 };
 
-// Exportation de l'objet ArticleDB
 export default ArticleDb;
+

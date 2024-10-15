@@ -1,6 +1,7 @@
 import express from 'express';
 import initRoutes from './routes/init.routes.js';
 import initMiddlewares from './middlewares/init.mdlwr.js';
+import 'dotenv/config'
 
 // Initialisation d'Express
 const app = express();

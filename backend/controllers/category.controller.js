@@ -1,4 +1,4 @@
-import { CategoryDb } from "../Databases/category.db";
+import { CategoryDb } from "../databases/category.db";
 
 const getAllCategory = async (req, res) => {
     try {
@@ -21,7 +21,7 @@ const addCategory = async (req, res) => {
         const existingCategory = await CategoryDb.findCategoryByName(category_name);
 
         if (existingCategory) {
-            return res.status(400).json({ message: `La category '${category_name}' existe déjà.` });
+            return res.status(400).json({ message: `La catégorie '${category_name}' existe déjà.` });
         }
 
         const newCategory = await CategoryDb.create(category_name);

@@ -1,19 +1,22 @@
 import mysql from 'mysql2';
+import dotenv from 'dotenv';
 
-// Configuration de MySQL
+// Charger le fichier .env
+dotenv.config();
+
 const dbConfig = {
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE
+    host: 'localhost',
+    user: 'mon-blog',
+    password: 'NZku_8:3,8R;kc5X',
+    database: 'mon-blog'
 };
 
 const connection = mysql.createConnection(dbConfig);
 
 connection.connect((err) => {
-    if(err)
+    if (err) {
         return console.error('Erreur de connexion à la base de données :', err.stack);
-
+    }
     console.log('Connecté à la base de données avec l\'ID : ', connection.threadId);
 });
 

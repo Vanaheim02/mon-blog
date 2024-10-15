@@ -1,5 +1,4 @@
 import { UserDb } from '../databases/user.db.js';
-import bcrypt from 'bcrypt';
 
 // Création d'un utilisateur
 const createUser = async (req, res) => {
@@ -81,7 +80,7 @@ const login = async (req, res) => {
 
         return res
             .status(200)
-            .json({ message: "Connexion réussie !", user: { id_user, mail }, token });
+            .json({ message: "Connexion réussie !", user: { id_user, user_mail }, token });
     } catch (error) {
         console.error("Erreur lors de la connexion de l'utilisateur :", error);
         res.status(500).json({ error: "Erreur lors de la connexion de l'utilisateur." });
@@ -93,9 +92,9 @@ const login = async (req, res) => {
 const updatePassword = async (request, response) => {
 
     try {
-        const { userId, currentPassword, newPassword, newPasswordConfirm } = request.body;
+        const { id_user, currentPassword, newPassword, newPasswordConfirm } = request.body;
 
-        const user = await UserDb.getUserById(userId);
+        const user = await UserDb.getUserById(id_user);
 
         if (!user)
             return response.status(404).json({ error: 'Utilisateur introuvable' });
@@ -114,7 +113,7 @@ const updatePassword = async (request, response) => {
         if (hashResult.error)
             return res.status(500).json({ error: hashError });
 
-        await UserDb.updatePassword(userId, hashResult.hashed);
+        await UserDb.updatePassword(id_user, hashResult.hashed);
 
         response.status(200).json({ message: 'Mot de passe changé avec succès' });
     }
@@ -128,16 +127,16 @@ const updatePassword = async (request, response) => {
 
 // Fonction de suppression d'un utilisateur
 const deleteUser = async (request, response) => {
-    const userId = request.body.userId
+    const userId = request.body.id_user
 
     try {
-        let userExist = await UserDb.getUserById(userId);
+        let userExist = await UserDb.getUserById(id_user);
 
         if (!userExist)
             response.status(404).json({ error: 'Utilisateur non trouvé' });
 
 
-        let result = await UserDb.deleteUser(userId);
+        let result = await UserDb.deleteUser(id_user);
 
         if (result.affectedRows != 1)
             response.status(409).json({ error: 'Utilisateur non supprimé' });

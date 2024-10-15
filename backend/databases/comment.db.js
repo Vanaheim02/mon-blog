@@ -4,16 +4,17 @@ const CommentDb = {
     // Ajouter un commentaire
     addComment: async (commentToAdd) => {
         try {
-            if (!commentToAdd || !commentToAdd.comment_content || !commentToAdd.fk_id_profiles || !commentToAdd.fk_id_article) {
+            // Vérifie si les données du commentaire sont complètes
+            if (!commentToAdd || !commentToAdd.comment_content || !commentToAdd.fk_id_profile || !commentToAdd.fk_id_article) {
                 throw new Error('Données de commentaire incomplètes');
             }
 
-            const { comment_content, fk_id_profiles, fk_id_article } = commentToAdd;
+            const { comment_content, fk_id_profile, fk_id_article } = commentToAdd;
 
             // Créer un nouveau commentaire
             const newComment = await db.query(
-                "INSERT INTO comments (comment_content, comment_created_at, fk_id_profiles, fk_id_article) VALUES (?, NOW(), ?, ?)",
-                [comment_content, fk_id_profiles, fk_id_article]
+                "INSERT INTO comments (comment_content, comment_created_at, fk_id_profile, fk_id_article) VALUES (?, NOW(), ?, ?)",
+                [comment_content, fk_id_profile, fk_id_article]
             );
 
             return newComment;
@@ -78,3 +79,5 @@ const CommentDb = {
 };
 
 export default CommentDb;
+
+

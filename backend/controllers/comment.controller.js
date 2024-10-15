@@ -3,9 +3,9 @@ import CommentDb from '../databases/comment.db.js';
 // Fonctionnalités pour tous les utilisateurs
 const createComment = async (req, res) => {
     try {
-        const { content, articleId } = req.body;
+        const { content, id_article } = req.body;
         // Ajout d'un nouveau commentaire
-        const newComment = await CommentDb.create(content, req.user.id, articleId);
+        const newComment = await CommentDb.create(content, req.user.id, id_article);
         res.status(201).json({ message: "Commentaire créé avec succès.", comment: newComment });
     } catch (err) {
         console.error("Erreur lors de la création du commentaire :", err);
@@ -15,8 +15,8 @@ const createComment = async (req, res) => {
 
 const getCommentsByArticle = async (req, res) => {
     try {
-        const { articleId } = req.params;
-        const comments = await CommentDb.findByArticleId(articleId);
+        const { id_article } = req.params;
+        const comments = await CommentDb.findByArticleId(id_article);
         res.status(200).json(comments);
     } catch (err) {
         console.error("Erreur lors de la récupération des commentaires :", err);
@@ -27,8 +27,8 @@ const getCommentsByArticle = async (req, res) => {
 // Fonctionnalités réservées aux administrateurs
 const deleteComment = async (req, res) => {
     try {
-        const { commentId } = req.params;
-        await CommentDb.delete(commentId);
+        const { id_comment } = req.params;
+        await CommentDb.delete(id_comment);
         res.status(200).json({ message: "Commentaire supprimé avec succès." });
     } catch (err) {
         console.error("Erreur lors de la suppression du commentaire :", err);

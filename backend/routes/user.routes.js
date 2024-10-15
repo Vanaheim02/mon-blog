@@ -1,5 +1,6 @@
 import express from 'express';
 import { UsersController } from '../controllers/user.controller.js';
+import jwtMdlwr from '../middlewares/init.mdlwr.js'
 
 const initUserRoutes = (app) => {
     const userRouter = express.Router();
@@ -21,3 +22,4 @@ const initUserRoutes = (app) => {
 };
 
 export default initUserRoutes;
+

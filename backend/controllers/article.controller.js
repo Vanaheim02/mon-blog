@@ -3,7 +3,7 @@ import ArticleDb from '../databases/article.db.js';
 // Créer un nouvel article
 const createArticle = async (req, res) => {
     const { title, content, categories, tags } = req.body;
-    const userId = req.user.id;
+    const id_user = req.user.id;
 
     try {
         if (!title || !content) {
@@ -13,10 +13,11 @@ const createArticle = async (req, res) => {
         const newArticle = await ArticleDb.create({
             title,
             content,
-            authorId: userId,
+            fk_id_author: id_user,
             categories,
             tags
         });
+
 
         res.status(201).json({ message: "Article créé avec succès.", article: newArticle });
     } catch (err) {
@@ -27,10 +28,10 @@ const createArticle = async (req, res) => {
 
 // Récupérer un article par ID
 const getArticleById = async (req, res) => {
-    const articleId = req.params.id;
+    const id_article = req.params.id;
 
     try {
-        const article = await ArticleDb.getById(articleId);
+        const article = await ArticleDb.getById(id_article);
 
         if (!article) {
             return res.status(404).json({ message: "Article non trouvé." });
@@ -46,18 +47,18 @@ const getArticleById = async (req, res) => {
 
 // Mettre à jour un article
 const updateArticle = async (req, res) => {
-    const articleId = req.params.id;
+    const id_article = req.params.id;
     const { title, content, categories, tags } = req.body;
-    const userId = req.user.id; // ID de l'utilisateur connecté
+    const id_user = req.user.id;
 
     try {
-        const article = await ArticleDb.getById(articleId);
+        const article = await ArticleDb.getById(id_article);
 
-        if (!article || article.authorId !== userId) {
+        if (!article || article.id_user !== id_user) {
             return res.status(403).json({ message: "Vous n'avez pas l'autorisation de modifier cet article." });
         }
 
-        const updatedArticle = await ArticleDb.update(articleId, { title, content, categories, tags });
+        const updatedArticle = await ArticleDb.update(id_article, { title, content, categories, tags });
 
         res.status(200).json({ message: "Article mis à jour avec succès.", article: updatedArticle });
     } catch (err) {
@@ -68,17 +69,17 @@ const updateArticle = async (req, res) => {
 
 // Supprimer un article
 const deleteArticle = async (req, res) => {
-    const articleId = req.params.id;
-    const userId = req.user.id; // ID de l'utilisateur connecté
+    const id_article = req.params.id;
+    const id_user = req.user.id;
 
     try {
-        const article = await ArticleDb.getById(articleId);
+        const article = await ArticleDb.getById(id_article);
 
-        if (!article || article.authorId !== userId) {
+        if (!article || article.fk_id_author !== id_user) {
             return res.status(403).json({ message: "Vous n'avez pas l'autorisation de supprimer cet article." });
         }
 
-        await ArticleDb.delete(articleId);
+        await ArticleDb.delete(id_article);
 
         res.status(200).json({ message: "Article supprimé avec succès." });
     } catch (err) {
