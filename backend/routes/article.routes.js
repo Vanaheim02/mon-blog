@@ -6,7 +6,6 @@ const initArticleRoutes = (app) => {
 
     // Route de test
     articleRouter.get('/test', (req, res) => {
-        console.log('yo');
         res.send('Route de test fonctionne');
     });
 
