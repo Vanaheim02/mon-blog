@@ -1,11 +1,6 @@
 import session from 'express-session';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
-
-dotenv.config({
-    path: './.env.dev'
-});
 
 const initMiddlewares = (app) => {
     // app.use(cors({ origin: 'http://localhost:5173' }));

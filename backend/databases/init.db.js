@@ -1,14 +1,10 @@
 import mysql from 'mysql2';
-import dotenv from 'dotenv';
-
-// Charger le fichier .env
-dotenv.config();
 
 const dbConfig = {
-    host: 'localhost',
-    user: 'mon-blog',
-    password: 'NZku_8:3,8R;kc5X',
-    database: 'mon-blog'
+    host: process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE
 };
 
 const connection = mysql.createConnection(dbConfig);
