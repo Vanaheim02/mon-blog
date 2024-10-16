@@ -1,3 +1,5 @@
+import db from './init.db.js';
+
 const ArticleDb = {
 
     addArticle: async (req, res) => {
