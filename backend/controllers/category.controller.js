@@ -62,69 +62,69 @@ verifyParent: async (req, res) => {
 
 
 
-    // // Ajouter toutes les catégories
-    // addAllCategory: async (req, res) => {
-    //     try {
-    //         await CategoryDb.addAllCategory();
-    //         res.status(201).json({ message: "Toutes les catégories ont été ajoutées avec succès." });
-    //     } catch (error) {
-    //         console.error('Erreur lors de l\'ajout des catégories :', error);
-    //         res.status(500).json({ error: "Erreur lors de l'ajout des catégories." });
-    //     }
-    // },
+// // Ajouter toutes les catégories
+// addAllCategory: async (req, res) => {
+//     try {
+//         await CategoryDb.addAllCategory();
+//         res.status(201).json({ message: "Toutes les catégories ont été ajoutées avec succès." });
+//     } catch (error) {
+//         console.error('Erreur lors de l\'ajout des catégories :', error);
+//         res.status(500).json({ error: "Erreur lors de l'ajout des catégories." });
+//     }
+// },
 
-    // // Récupérer toutes les catégories
-    // getAllCategory: async (req, res) => {
-    //     try {
-    //         const categories = await CategoryDb.getAllCategory();
-    //         res.status(200).json(categories);
-    //     } catch (error) {
-    //         console.error('Erreur lors de la récupération des catégories :', error);
-    //         res.status(500).json({ error: "Erreur lors de la récupération des catégories." });
-    //     }
-    // },
+// // Récupérer toutes les catégories
+// getAllCategory: async (req, res) => {
+//     try {
+//         const categories = await CategoryDb.getAllCategory();
+//         res.status(200).json(categories);
+//     } catch (error) {
+//         console.error('Erreur lors de la récupération des catégories :', error);
+//         res.status(500).json({ error: "Erreur lors de la récupération des catégories." });
+//     }
+// },
 
-    // // Récupérer une catégorie par ID
-    // getCategoryById: async (req, res) => {
-    //     const category_id = req.params.id;
-    //     try {
-    //         const category = await CategoryDb.getCategoryById(category_id);
-    //         if (!category) {
-    //             return res.status(404).json({ message: "Catégorie non trouvée." });
-    //         }
-    //         res.status(200).json(category);
-    //     } catch (error) {
-    //         console.error('Erreur lors de la récupération de la catégorie :', error);
-    //         res.status(500).json({ error: "Erreur lors de la récupération de la catégorie." });
-    //     }
-    // },
+// // Récupérer une catégorie par ID
+// getCategoryById: async (req, res) => {
+//     const category_id = req.params.id;
+//     try {
+//         const category = await CategoryDb.getCategoryById(category_id);
+//         if (!category) {
+//             return res.status(404).json({ message: "Catégorie non trouvée." });
+//         }
+//         res.status(200).json(category);
+//     } catch (error) {
+//         console.error('Erreur lors de la récupération de la catégorie :', error);
+//         res.status(500).json({ error: "Erreur lors de la récupération de la catégorie." });
+//     }
+// },
 
-    // // Mettre à jour une catégorie
-    // updateCategory: async (req, res) => {
-    //     const category_id = req.params.id;
-    //     const updatedCategory = req.body;
+// // Mettre à jour une catégorie
+// updateCategory: async (req, res) => {
+//     const category_id = req.params.id;
+//     const updatedCategory = req.body;
 
-    //     try {
-    //         await CategoryDb.updateCategory(category_id, updatedCategory);
-    //         res.status(200).json({ message: "Catégorie mise à jour avec succès." });
-    //     } catch (error) {
-    //         console.error('Erreur lors de la mise à jour de la catégorie :', error);
-    //         res.status(500).json({ error: "Erreur lors de la mise à jour de la catégorie." });
-    //     }
-    // },
+//     try {
+//         await CategoryDb.updateCategory(category_id, updatedCategory);
+//         res.status(200).json({ message: "Catégorie mise à jour avec succès." });
+//     } catch (error) {
+//         console.error('Erreur lors de la mise à jour de la catégorie :', error);
+//         res.status(500).json({ error: "Erreur lors de la mise à jour de la catégorie." });
+//     }
+// },
 
-    // // Supprimer une catégorie
-    // deleteCategory: async (req, res) => {
-    //     const category_id = req.params.id;
+// // Supprimer une catégorie
+// deleteCategory: async (req, res) => {
+//     const category_id = req.params.id;
 
-    //     try {
-    //         await CategoryDb.deleteCategory(category_id);
-    //         res.status(200).json({ message: "Catégorie supprimée avec succès." });
-    //     } catch (error) {
-    //         console.error('Erreur lors de la suppression de la catégorie :', error);
-    //         res.status(500).json({ error: "Erreur lors de la suppression de la catégorie." });
-    //     }
-    // }
-};
+//     try {
+//         await CategoryDb.deleteCategory(category_id);
+//         res.status(200).json({ message: "Catégorie supprimée avec succès." });
+//     } catch (error) {
+//         console.error('Erreur lors de la suppression de la catégorie :', error);
+//         res.status(500).json({ error: "Erreur lors de la suppression de la catégorie." });
+//     }
+// }
+;
 
 export default CategoryController;
