@@ -4,7 +4,22 @@ const CategoryController = {
     addCategory: async (req, res) => {
         try {
             const { name, parent } = req.body;
+
+            // Si name est undefined ou vide, on renvoie une erreur
+            if(typeof name === 'undefined' || name.length == 0)
+                return res.status(500).json({ error: 'Nom de catégorie vide' });
+
+            // TODO:
+            /**
+             * - Vérifier que le nom de la catégorie n'existe pas déjà dans la BDD
+             * - Si parent est différent de "undefined", n'est pas vide, n'est pas null, et est un nombre etnier (int)
+             *      - Vérifier l'existence de l'ID dans la table `category`
+             */
+
+            // On appelle la requête car nos conditions sont remplies
             await CategoryDb.addCategory(name, parent);
+
+            // Tout est OK donc message de validation
             return res.status(201).json({ message: "Catégorie ajoutée avec succès." });
         } catch (error) {
             if (process.env.APP_ENV == 'dev') {
