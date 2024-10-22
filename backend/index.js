@@ -5,12 +5,12 @@ import initMiddlewares from './middlewares/init.mdlwr.js';
 
 // Initialisation d'Express
 const app = express();
+const PORT = process.env.APP_PORT || 5000;
 
 // Initialisation des composants
 initMiddlewares(app);
 initRoutes(app);
 
-const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Serveur démarré sur le port ${PORT}`);
 });

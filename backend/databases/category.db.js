@@ -1,70 +1,70 @@
-import Database from "./init.db.js";
+import db from './init.db.js';
 
 const CategoryDb = {
-    // Fonction pour ajouter une catégorie
-    addCategory: async (req, res) => {
-        const categoryToAdd = req.body;
-
+    // Ajouter une catégorie
+    addCategory: async (category_name, fk_category_parent) => {
         try {
-            if (!categoryToAdd || !categoryToAdd.category_name) { // Vérifie si category_name est défini
-                return res.status(400).json({ message: 'Aucune catégorie à ajouter.' });
-            }
-
-            const { category_name } = categoryToAdd; // Récupération du nom de la catégorie
-
-            // Crée une nouvelle catégorie
-            const newCategory = await Database.create(category_name);
-
-            res.status(201).json({ message: 'Catégorie ajoutée avec succès.', category: newCategory });
+            let query = 'INSERT INTO category (category_name, fk_category_parent) VALUES (?, ?);';
+            let [results] = await db.promise().execute(query, [category_name, fk_category_parent]);
+            return results;
         } catch (error) {
-            console.error('Erreur lors de l\'ajout de la catégorie : ', error);
-            res.status(500).json({ error: 'Erreur lors de l\'ajout de la catégorie.' });
+            console.error('Erreur lors de l\'insertion :', error);
+            return { error: error.message };
         }
     },
+    // // Récupérer toutes les catégories
+    // getAllCategory: async () => {
+    //     try {
+    //         const category = await db.query("SELECT * FROM category");
+    //         return category;
+    //     } catch (error) {
+    //         console.error('Erreur lors de la récupération des catégories :', error);
+    //         throw new Error('Erreur lors de la récupération des catégories');
+    //     }
+    // },
+    // // Récupérer une catégorie par ID
+    // getCategoryById: async (category_id) => {
+    //     try {
+    //         const [category] = await db.query("SELECT * FROM category WHERE category_id = ?", [category_id]);
+    //         return category;
+    //     } catch (error) {
+    //         console.error('Erreur lors de la récupération de la catégorie :', error);
+    //         throw new Error('Erreur lors de la récupération de la catégorie');
+    //     }
+    // },
 
-    // Contrôleur pour récupérer toutes les catégories de jeux vidéo
-    getAllCategory: async (req, res) => { // Correction ici pour assurer l'uniformité
-        try {
-            const categories = await Database.readAll(); // Récupère toutes les catégories
+    // // Mettre à jour une catégorie
+    // updateCategory: async (category_id, updatedCategory) => {
+    //     try {
+    //         if (!updatedCategory || !updatedCategory.category_name) {
+    //             throw new Error('Nom de la catégorie manquant');
+    //         }
 
-            res.status(200).json(categories);
-        } catch (err) {
-            console.error("Erreur dans le contrôleur getAllCategory :", err);
-            res.status(500).json({ error: "Erreur serveur." });
-        }
-    },
+    //         const { category_name } = updatedCategory;
 
-    // Contrôleur pour mettre à jour une catégorie
-    updateCategory: async (req, res) => {
-        const id_category = req.params.id;
-        const updatedCategory = req.body;
+    //         // Mettre à jour la catégorie
+    //         await db.query(
+    //             "UPDATE category SET category_name = ? WHERE category_id = ?",
+    //             [category_name, category_id]
+    //         );
+    //     } catch (error) {
+    //         console.error('Erreur lors de la mise à jour de la catégorie :', error);
+    //         throw new Error('Erreur lors de la mise à jour de la catégorie');
+    //     }
+    // },
 
-        try {
-            // Vérifie que category_name est défini dans updatedCategory
-            const { category_name } = updatedCategory;
-
-            // Met à jour la catégorie
-            await Database.update(id_category, category_name);
-
-            res.status(200).json({ message: 'Catégorie mise à jour avec succès.' });
-        } catch (error) {
-            console.error('Erreur lors de la mise à jour de la catégorie : ', error);
-            res.status(500).json({ error: 'Erreur lors de la mise à jour de la catégorie.' });
-        }
-    },
-
-    // Contrôleur pour supprimer une catégorie
-    deleteCategory: async (req, res) => {
-        const id_category = req.params.id;
-
-        try {
-            await Database.remove(id_category);
-            res.status(200).json({ message: 'Catégorie supprimée avec succès.' });
-        } catch (error) {
-            console.error('Erreur lors de la suppression de la catégorie : ', error);
-            res.status(500).json({ error: 'Erreur lors de la suppression de la catégorie.' });
-        }
-    }
+    // // Supprimer une catégorie
+    // deleteCategory: async (category_id) => {
+    //     try {
+    //         // Supprimer la catégorie
+    //         await db.query("DELETE FROM category WHERE category_id = ?", [category_id]);
+    //     } catch (error) {
+    //         console.error('Erreur lors de la suppression de la catégorie :', error);
+    //         throw new Error('Erreur lors de la suppression de la catégorie');
+    //     }
+    // }
 };
 
-export { CategoryDb };
+export default CategoryDb;
+
+

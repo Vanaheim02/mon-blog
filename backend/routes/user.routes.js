@@ -1,12 +1,8 @@
-import express from 'express';
-import { UsersController } from '../controllers/user.controller.js';
-import jwtMdlwr from '../middlewares/init.mdlwr.js'
-
 const initUserRoutes = (app) => {
     const userRouter = express.Router();
 
     // Route pour créer un utilisateur
-    userRouter.post('/register', UsersController.createUser);
+    userRouter.post('/create', UsersController.createUser);
 
     // Route pour se connecter
     userRouter.post('/login', UsersController.login);
@@ -22,4 +18,5 @@ const initUserRoutes = (app) => {
 };
 
 export default initUserRoutes;
+
 
