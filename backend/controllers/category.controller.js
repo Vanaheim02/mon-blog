@@ -2,61 +2,46 @@ import CategoryDb from '../databases/category.db.js';
 
 const CategoryController = {
     addCategory: async (req, res) => {
+        const { name, parent } = req.body;
+
+
+
+        // Vérifie le nom
+        if (!name || name.length === 0) {
+            return res.status(400).json({ error: "Le nom de la catégorie est requis." });
+        }
+
+        // Vérifie que le nom n'existe pas déjà
+        const exists = await CategoryDb.categoryExists(name);
+        if (exists) {
+            return res.status(400).json({ error: "Le nom de la catégorie existe déjà." });
+        }
+
+        // Vérification du parent
+        if (parent !== null) {
+            if (!Number.isInteger(parent)) {
+                return res.status(400).json({ error: "L'identifiant de la catégorie parent doit être un entier." });
+            }
+
+            // Vérifie si la catégorie parente existe
+            const parentExists = await CategoryDb.categoryExistsById(parent);
+            if (!parentExists) {
+                return res.status(400).json({ error: "La catégorie parent n'existe pas." });
+            }
+        }
+
+        // Ajout de la catégorie
         try {
-            const { name, parent } = req.body;
             await CategoryDb.addCategory(name, parent);
             return res.status(201).json({ message: "Catégorie ajoutée avec succès." });
         } catch (error) {
-            if (process.env.APP_ENV == 'dev') {
-                console.error('Erreur lors de l\'ajout de la catégorie :', error);
-            }
+
             return res.status(500).json({ error: "Erreur lors de l'ajout de la catégorie." });
         }
     },
-    // Vérifie le nom d'une catégorie
-    checkCategory: async (req, res) => {
-        try {
-            const { name, parent } = req.body;
-            await CategoryDb.checkCategory(name, parent);
-            return res.status(200).json({ message: "Le nom de la catégorie est valide" });
-        } catch (error) {
-            console.error("Erreur lors de la vérification de la catégorie");
-            return res.status(500).json({ error: "Erreur lors de la verification de la categorie" });
-        }
-    },
-    // Vérifie si le nom de la catégorie existe
-    categoryExists: async (req, res) => {
-        try {
-            const { name, category } = req.body;
-            if (!category || !name) {
-                return res.status(400).json({ message: "Les champs 'name' et 'category' sont requis." });
-            }
-            const exists = await CategoryDb.checkCategory(name, category);
-            return res.status(200).json({ exists });
-        } catch (error) {
-            console.error("Le nom de la categorie existe dejà");
-            return res.status(500).json({ error: "Le nom de la categorie existe dejà" });
-        }
-    },
-};  // Vérification parent
-verifyParent: async (req, res) => {
-    const { name, parentId } = req.body;
-
-    // Validation du nom
-    if (!name || name.length === 0) {
-        return res.status(400).json({ error: "Le nom de la catégorie est requis" });
-    }
-
-    // Validation du parent
-    if (parentId) {
-        const parentExists = await categoryExistsById(parentId);
-        if (!parentExists) {
-            return res.status(400).json({ error: "La catégorie parent n'existe pas" });
-        } else {
-            return res.status(200).json({ message: "La catégorie parent existe" });
-        }
-    }
 };
+
+
 
 
 
