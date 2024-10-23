@@ -33,6 +33,8 @@ const CategoryController = {
         // Ajout de la catégorie
         try {
             await CategoryDb.addCategory(name, parent);
+
+            // Tout est OK donc message de validation
             return res.status(201).json({ message: "Catégorie ajoutée avec succès." });
         } catch (error) {
 
