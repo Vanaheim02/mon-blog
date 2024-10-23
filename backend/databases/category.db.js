@@ -12,18 +12,31 @@ const CategoryDb = {
             return { error: error.message };
         }
     },
+    categoryExists: async (category_name, fk_category_parent) => {
+        try {
+            let query = `
+                SELECT
+                    category_name,
+                    fk_category_parent
+                FROM category
+                WHERE
+                    category_name = ?
+                    AND fk_category_parent ` + (fk_category_parent === null ? `IS NULL;` : `= ?;`)
+                ;
 
-    // Créer une catégorie
-    createCategory: async function (category_name, fk_category_parent) {
-        if (!category_name) {
-            return { error: 'Le nom de la catégorie est requis.' };
-        }
+            let data = [category_name];
+            if (fk_category_parent !== null)
+                data.push(fk_category_parent);
 
-        const result = await this.addCategory(category_name, fk_category_parent);
-        if (result.error) {
-            return { error: "Échec de la création de la catégorie" };
+            let [results] = await db.promise().execute(query, [category_name]);
+            return results;
+        } catch (error) {
+            console.error('Erreur lors de la sélection :', error);
+            return { error: error.message };
         }
-        return { message: "Catégorie créée avec succès." };
+    },
+    getCategoryById: async (fk_category_parent) => {
+
     }
 };
 
