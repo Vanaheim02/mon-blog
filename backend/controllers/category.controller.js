@@ -27,6 +27,15 @@ const CategoryController = {
                 return res.status(400).json({ error: "L'identifiant de la catégorie parent doit être un entier." });
 
             return;
+            // Vérifier si la catégorie parente existe
+            if (fk_category_parent !== null) {
+                const parentExists = await CategoryDb.getCategoryById(fk_category_parent);
+                if (!parentExists) {
+                    return res.status(400).json({ error: "La catégorie parent n'existe pas." });
+                }
+            }
+
+
 
             // TODO: Vérifier si la catégorie parente existe
             //     const parentExists = await CategoryDb.getCategoryById(parent);
@@ -51,6 +60,20 @@ const CategoryController = {
         }
     },
     // TODO: Lister toutes les catégories
+
+    ListCategory: async (req, res) => {
+        try {
+            const categories = await CategoryDb.getAllCategories();
+            if (categories.error) {
+                return res.status(500).json({ error: categories.error });
+            }
+            return res.status(200).json({ message: "Catégorie ajouté avec succès" });
+        } catch (error) {
+            console.error('Erreur lors de la récupération des catégories:', error);
+            return res.status(500).json({ error: "Impossible de récupérer une catégorie" });
+        }
+
+    }
 };
 
 

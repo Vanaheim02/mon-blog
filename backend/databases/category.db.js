@@ -1,7 +1,6 @@
 import db from './init.db.js';
 
 const CategoryDb = {
-    // Ajouter une catégorie
     addCategory: async (category_name, fk_category_parent) => {
         try {
             let query = 'INSERT INTO category (category_name, fk_category_parent) VALUES (?, ?);';
@@ -21,14 +20,13 @@ const CategoryDb = {
                 FROM category
                 WHERE
                     category_name = ?
-                    AND fk_category_parent ` + (fk_category_parent === null ? `IS NULL;` : `= ?;`)
-                ;
+                    AND fk_category_parent ` + (fk_category_parent === null ? `IS NULL;` : `= ?;`);
 
             let data = [category_name];
             if (fk_category_parent !== null)
                 data.push(fk_category_parent);
 
-            let [results] = await db.promise().execute(query, [category_name]);
+            let [results] = await db.promise().execute(query, data);
             return results;
         } catch (error) {
             console.error('Erreur lors de la sélection :', error);
@@ -36,9 +34,28 @@ const CategoryDb = {
         }
     },
     getCategoryById: async (fk_category_parent) => {
-
+        try {
+            const query = 'SELECT * FROM category WHERE id = ?;';
+            const [results] = await db.promise().execute(query, [fk_category_parent]);
+            return results.length > 0 ? results[0] : null;
+        } catch (error) {
+            console.error("Erreur lors de la sélection");
+            return { error: error.message };
+        }
+    },
+    ListCategory: async () => {
+        try {
+            const query = 'SELECT * FROM category;';
+            const [results] = await db.promise().execute(query);
+            return results;
+        } catch (error) {
+            console.error('Erreur lors de la sélection des catégories :', error);
+            return { error: error.message };
+        }
     }
 };
+
+
 
 
 
