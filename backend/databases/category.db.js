@@ -35,25 +35,74 @@ const CategoryDb = {
     },
     getCategoryById: async (fk_category_parent) => {
         try {
-            const query = 'SELECT * FROM category WHERE id = ?;';
+            const query = 'SELECT * FROM category WHERE category_id = ?;';
             const [results] = await db.promise().execute(query, [fk_category_parent]);
-            return results.length > 0 ? results[0] : null;
+            return results;
         } catch (error) {
             console.error("Erreur lors de la sélection");
             return { error: error.message };
         }
     },
-    ListCategory: async () => {
+    listCategory: async () => {
         try {
             const query = 'SELECT * FROM category;';
             const [results] = await db.promise().execute(query);
             return results;
         } catch (error) {
-            console.error('Erreur lors de la sélection des catégories :', error);
+            console.error('Erreur lors de la sélection des catégories');
             return { error: error.message };
         }
-    }
+    },
+
+    getParentId: async (fk_category_parent) => {
+        try {
+            const query = 'SELECT * FROM Category WHERE category_id = ?;';
+            const [results] = await db.promise().execute(query, [fk_category_parent]);
+            return results;
+        } catch (error) {
+            console.error("Erreur lors de la récupération de l'id du parent");
+            return { error: error.message };
+        }
+    },
+
+    getParentById: async (category_id) => {
+        try {
+            const query = "SELECT * FROM Category WHERE category_id = ?;";
+            const [results] = await db.promise().execute(query, [category_id]);
+            return results;
+        } catch (error) {
+            console.error("Erreur lors de la récupération de la catégorie parente");
+            return { error: error.message };
+        }
+    },
+
+    getUpdateCategory: async (category_name, category_id) => {
+        try {
+            const query = "UPDATE Category SET category_name = ? WHERE category_id = ?;";
+            const [results] = await db.promise().execute(query, [category_name, category_id]);
+            return results;
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour de la catégorie", error);
+            return { error: error.message };
+        }
+    },
+
+
+    getDeleteCategory: async (category_id) => {
+        try {
+            const query = "DELETE FROM Category WHERE category_id = ?;";
+            const [results] = await db.promise().execute(query, [category_id]);
+            return results;
+
+        } catch (error) {
+            console.error("Erreur lors de la suppression de la catégorie");
+            return { error: error.message };
+        }
+    },
+
 };
+
+
 
 
 

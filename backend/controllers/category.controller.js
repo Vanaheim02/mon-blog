@@ -15,10 +15,9 @@ const CategoryController = {
             if (parent === null || Number.isInteger(parent)) {
                 // Vérifie que la catégorie n'existe pas déjà (vérifier nom + parent)
                 let exists = await CategoryDb.categoryExists(name, parent);
-                let existsError = exists.error;
 
-                if (existsError)
-                    return res.status(400).json({ error: existsError });
+                if (typeof exists.error !== 'undefined')
+                    return res.status(400).json({ error: exists.error });
 
                 if (exists.length > 0)
                     return res.status(409).json({ error: 'Cette catégorie existe déjà' });
@@ -26,32 +25,23 @@ const CategoryController = {
             else
                 return res.status(400).json({ error: "L'identifiant de la catégorie parent doit être un entier." });
 
-            return;
             // Vérifier si la catégorie parente existe
-            if (fk_category_parent !== null) {
-                const parentExists = await CategoryDb.getCategoryById(fk_category_parent);
-                if (!parentExists) {
-                    return res.status(400).json({ error: "La catégorie parent n'existe pas." });
-                }
+            if (parent !== null) {
+                let parentExists = await CategoryDb.getCategoryById(parent);
+
+                if (typeof parentExists.error !== 'undefined')
+                    return res.status(400).json({ error: parentExists.error });
+                else if (parentExists.length == 0)
+                    return res.status(400).json({ error: "La catégorie parent n'existe pas." })
             }
 
-
-
-            // TODO: Vérifier si la catégorie parente existe
-            //     const parentExists = await CategoryDb.getCategoryById(parent);
-            //     if (!parentExists) {
-            //         return res.status(400).json({ error: "La catégorie parent n'existe pas." });
-            //     }
-
-            // On insère la donnée
             let response = await CategoryDb.addCategory(name, parent);
-            let responseError = response.error;
 
-            if (responseError)
-                return res.status(400).json({ error: responseError });
+            if (typeof response.error !== 'undefined')
+                return res.status(400).json({ error: response.error });
 
             // Tout est OK donc message de validation
-            return res.status(201).json({ message: "Catégorie ajoutée avec succès à l'ID : " + response.insertId });
+            return res.status(201).json({ message: "Catégorie ajoutée avec succès à l'ID : " + response.insertId + (parent !== null ? ' avec comme ID parent : ' + parent : '') });
         } catch (error) {
             if (process.env.APP_ENV == 'dev')
                 console.error(error.stack);
@@ -59,92 +49,117 @@ const CategoryController = {
             return res.status(500).json({ error: "Erreur lors de l'ajout de la catégorie." });
         }
     },
-    // TODO: Lister toutes les catégories
-
-    ListCategory: async (req, res) => {
+    listCategory: async (req, res) => {
         try {
-            const categories = await CategoryDb.getAllCategories();
-            if (categories.error) {
-                return res.status(500).json({ error: categories.error });
-            }
-            return res.status(200).json({ message: "Catégorie ajouté avec succès" });
+            let categories = await CategoryDb.listCategory();
+
+            if (typeof categories.error !== 'undefined')
+                return res.status(400).json({ error: categories.error });
+
+            return res.status(200).json(categories);
         } catch (error) {
-            console.error('Erreur lors de la récupération des catégories:', error);
-            return res.status(500).json({ error: "Impossible de récupérer une catégorie" });
+            if (process.env.APP_ENV == 'dev')
+                console.error(error.stack);
+
+            return res.status(500).json({ error: "Erreur lors de la sélection des catégories." });
+        }
+    },
+    // TODO: Sélectionner une catégorie par son ID
+
+
+    getParentId: async (req, res) => {
+        const parentIdParam = req.params.id;
+
+        try {
+            const parentId = await CategoryDb.getParentId(parentIdParam);
+
+            if (parentId.error) {
+                return res.status(400).json({ error: parentId.error });
+            } else if (parentId.length === 0) {
+                return res.status(404).json({ message: "ID du parent non trouvé" });
+            }
+
+            return res.status(200).json({ message: "Catégorie parent trouvé avec succès", data: parentId });
+
+        } catch (error) {
+            console.error("Erreur lors de la récupération de l'id du parent :", error);
+            return res.status(500).json({ error: "Erreur lors de la récupération de l'id parent" });
+        }
+    },
+
+
+
+    // TODO: Sélectionner une catégorie parente via l'ID parent d'une catégorie
+
+
+    getParentById: async (req, res) => {
+        const parentIdParam = req.params.id;
+        try {
+            const parent = await CategoryDb.getParentById(parentIdParam);
+
+            if (!parent || parent.length === 0) {
+                return res.status(404).json({ message: "Impossible de récupérer l'id parent d'une catégorie" });
+            }
+
+            return res.status(200).json({ message: "Id de la catégorie parent trouvé avec succès", data: parent });
+        } catch (error) {
+            console.error("Erreur lors de la récupération de l'id parent de la catégorie:", error);
+            return res.status(400).json({ error: "Erreur lors de la récupération de l'id parent de la catégorie" });
+        }
+    },
+
+
+
+    // TODO: Mettre à jour une catégorie par son ID
+
+
+    getUpdateCategory: async (req, res) => {
+        const category_id = req.params.id;
+        const { category_name } = req.body;
+
+        if (!category_name) {
+            return res.status(400).json({ error: "Le nom de la catégorie est requis." });
         }
 
-    }
+        try {
+            const result = await CategoryDb.getUpdateCategory(category_name, category_id);
+
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ message: "Catégorie non trouvée." });
+            }
+
+            res.status(200).json({ message: "Catégorie mise à jour avec succès." });
+        } catch (error) {
+            console.error("Erreur dans le contrôleur de mise à jour de catégorie :", error);
+            res.status(500).json({ error: "Erreur lors de la mise à jour de la catégorie." });
+        }
+    },
+
+
+    // TODO: Supprimer une catégorie par son ID
+
+    getDeleteCategory: async (req, res) => {
+        const category_id = req.params.id;
+
+        if (!category_id) {
+            return res.status(400).json({ error: "L'ID de la catégorie est requis." });
+        }
+
+        try {
+            const result = await CategoryDb.getDeleteCategory(category_id);
+
+            if (!result || result.length === 0) {
+                return res.status(404).json({ message: "Catégorie non trouvée." });
+            }
+
+            res.status(200).json({ message: "Catégorie supprimée avec succès." });
+        } catch (error) {
+            console.error("Erreur lors de la suppression de la catégorie.", error);
+            res.status(500).json({ error: "Erreur lors de la suppression de la catégorie." });
+        }
+
+    },
+
 };
-
-
-
-
-
-
-
-// // Ajouter toutes les catégories
-// addAllCategory: async (req, res) => {
-//     try {
-//         await CategoryDb.addAllCategory();
-//         res.status(201).json({ message: "Toutes les catégories ont été ajoutées avec succès." });
-//     } catch (error) {
-//         console.error('Erreur lors de l\'ajout des catégories :', error);
-//         res.status(500).json({ error: "Erreur lors de l'ajout des catégories." });
-//     }
-// },
-
-// // Récupérer toutes les catégories
-// getAllCategory: async (req, res) => {
-//     try {
-//         const categories = await CategoryDb.getAllCategory();
-//         res.status(200).json(categories);
-//     } catch (error) {
-//         console.error('Erreur lors de la récupération des catégories :', error);
-//         res.status(500).json({ error: "Erreur lors de la récupération des catégories." });
-//     }
-// },
-
-// // Récupérer une catégorie par ID
-// getCategoryById: async (req, res) => {
-//     const category_id = req.params.id;
-//     try {
-//         const category = await CategoryDb.getCategoryById(category_id);
-//         if (!category) {
-//             return res.status(404).json({ message: "Catégorie non trouvée." });
-//         }
-//         res.status(200).json(category);
-//     } catch (error) {
-//         console.error('Erreur lors de la récupération de la catégorie :', error);
-//         res.status(500).json({ error: "Erreur lors de la récupération de la catégorie." });
-//     }
-// },
-
-// // Mettre à jour une catégorie
-// updateCategory: async (req, res) => {
-//     const category_id = req.params.id;
-//     const updatedCategory = req.body;
-
-//     try {
-//         await CategoryDb.updateCategory(category_id, updatedCategory);
-//         res.status(200).json({ message: "Catégorie mise à jour avec succès." });
-//     } catch (error) {
-//         console.error('Erreur lors de la mise à jour de la catégorie :', error);
-//         res.status(500).json({ error: "Erreur lors de la mise à jour de la catégorie." });
-//     }
-// },
-
-// // Supprimer une catégorie
-// deleteCategory: async (req, res) => {
-//     const category_id = req.params.id;
-
-//     try {
-//         await CategoryDb.deleteCategory(category_id);
-//         res.status(200).json({ message: "Catégorie supprimée avec succès." });
-//     } catch (error) {
-//         console.error('Erreur lors de la suppression de la catégorie :', error);
-//         res.status(500).json({ error: "Erreur lors de la suppression de la catégorie." });
-//     }
-// }
-;
 
 export default CategoryController;
