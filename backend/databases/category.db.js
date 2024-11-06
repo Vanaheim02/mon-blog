@@ -33,13 +33,13 @@ const CategoryDb = {
             return { error: error.message };
         }
     },
-    getCategoryById: async (fk_category_parent) => {
+    getCategoryById: async (category_id) => {
         try {
             const query = 'SELECT * FROM category WHERE category_id = ?;';
-            const [results] = await db.promise().execute(query, [fk_category_parent]);
+            const [results] = await db.promise().execute(query, [category_id]);
             return results;
         } catch (error) {
-            console.error("Erreur lors de la sélection");
+            console.error("Erreur lors de la sélection :", error);
             return { error: error.message };
         }
     },

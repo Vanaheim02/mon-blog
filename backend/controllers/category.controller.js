@@ -65,33 +65,33 @@ const CategoryController = {
         }
     },
     // TODO: Sélectionner une catégorie par son ID
-
-
-    getParentId: async (req, res) => {
-        const parentIdParam = req.params.id;
-
+    getCategoryById: async (req, res) => {
         try {
-            const parentId = await CategoryDb.getParentId(parentIdParam);
+            // On vérifie que la paramètre soit un nombre
+            if(isNaN(req.params.id))
+                return res.status(400).json({ error: 'L\'ID de la catégorie doit être un entier' });
 
-            if (parentId.error) {
-                return res.status(400).json({ error: parentId.error });
-            } else if (parentId.length === 0) {
-                return res.status(404).json({ message: "ID du parent non trouvé" });
+            // On transforme la donnée en entier décimal (base 10)
+            let categoryId = parseInt(req.params.id, 10);
+            let category = await CategoryDb.getCategoryById(categoryId);
+
+            if (category.error) {
+                return res.status(400).json({ error: category.error });
+            } else if (category.length === 0) {
+                return res.status(404).json({ message: "Catégorie introuvable" });
             }
 
-            return res.status(200).json({ message: "Catégorie parent trouvé avec succès", data: parentId });
+            // statut 200 OK + on renvoie la catégorie en JSON
+            return res.status(200).json(category);
 
         } catch (error) {
-            console.error("Erreur lors de la récupération de l'id du parent :", error);
-            return res.status(500).json({ error: "Erreur lors de la récupération de l'id parent" });
+            if(process.env.APP_ENV === 'dev')
+                console.error(error.stack);
+
+            return res.status(500).json({ error: "Erreur lors de la récupération de la catégorie par son ID" });
         }
     },
-
-
-
     // TODO: Sélectionner une catégorie parente via l'ID parent d'une catégorie
-
-
     getParentById: async (req, res) => {
         const parentIdParam = req.params.id;
         try {
