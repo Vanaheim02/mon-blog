@@ -64,15 +64,14 @@ const CategoryController = {
             return res.status(500).json({ error: "Erreur lors de la sélection des catégories." });
         }
     },
-    // TODO: Sélectionner une catégorie par son ID
     getCategoryById: async (req, res) => {
         try {
             // On vérifie que la paramètre soit un nombre
-            if(isNaN(req.params.id))
+            if (isNaN(req.params.id))
                 return res.status(400).json({ error: 'L\'ID de la catégorie doit être un entier' });
 
             // On transforme la donnée en entier décimal (base 10)
-            let categoryId = parseInt(req.params.id, 10);
+            const categoryId = parseInt(req.params.id, 10);
             let category = await CategoryDb.getCategoryById(categoryId);
 
             if (category.error) {
@@ -83,37 +82,31 @@ const CategoryController = {
 
             // statut 200 OK + on renvoie la catégorie en JSON
             return res.status(200).json(category);
-
         } catch (error) {
-            if(process.env.APP_ENV === 'dev')
+            if (process.env.APP_ENV === 'dev')
                 console.error(error.stack);
 
             return res.status(500).json({ error: "Erreur lors de la récupération de la catégorie par son ID" });
         }
     },
-    // TODO: Sélectionner une catégorie parente via l'ID parent d'une catégorie
-    getParentById: async (req, res) => {
-        const parentIdParam = req.params.id;
-        try {
-            const parent = await CategoryDb.getParentById(parentIdParam);
+    // TODO: Sélectionner une catégorie parente via l'ID parent d'une catégorie (à faire plus tard)
+    // getParentById: async (req, res) => {
+    //     const parentIdParam = req.params.id;
+    //     try {
+    //         const parent = await CategoryDb.getParentById(parentIdParam);
 
-            if (!parent || parent.length === 0) {
-                return res.status(404).json({ message: "Impossible de récupérer l'id parent d'une catégorie" });
-            }
+    //         if (!parent || parent.length === 0) {
+    //             return res.status(404).json({ message: "Impossible de récupérer l'id parent d'une catégorie" });
+    //         }
 
-            return res.status(200).json({ message: "Id de la catégorie parent trouvé avec succès", data: parent });
-        } catch (error) {
-            console.error("Erreur lors de la récupération de l'id parent de la catégorie:", error);
-            return res.status(400).json({ error: "Erreur lors de la récupération de l'id parent de la catégorie" });
-        }
-    },
-
-
-
+    //         return res.status(200).json({ message: "Id de la catégorie parent trouvé avec succès", data: parent });
+    //     } catch (error) {
+    //         console.error("Erreur lors de la récupération de l'id parent de la catégorie:", error);
+    //         return res.status(400).json({ error: "Erreur lors de la récupération de l'id parent de la catégorie" });
+    //     }
+    // },
     // TODO: Mettre à jour une catégorie par son ID
-
-
-    getUpdateCategory: async (req, res) => {
+    updateCategory: async (req, res) => {
         const category_id = req.params.id;
         const { category_name } = req.body;
 
@@ -138,7 +131,7 @@ const CategoryController = {
 
     // TODO: Supprimer une catégorie par son ID
 
-    getDeleteCategory: async (req, res) => {
+    deleteCategory: async (req, res) => {
         const category_id = req.params.id;
 
         if (!category_id) {

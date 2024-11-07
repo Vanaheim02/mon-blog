@@ -12,17 +12,14 @@ const initCategoryRoutes = (app) => {
     // Route pour ajouter une nouvelle catégorie
     categoryRouter.post('/add', jsonParser, CategoryController.addCategory);
 
-    // Route pour récupérer une catégorie par ID
+    // Route pour récupérer une catégorie par son ID
     categoryRouter.get('/read/:id', jsonParser, CategoryController.getCategoryById);
 
-    // // Route pour Sélectionner une catégorie parente via la catégorie parent Id
-    // categoryRouter.get('/:id', jsonParser, CategoryController.getParentById);
-
     // // Route pour mettre à jour une catégorie
-    // categoryRouter.put('/:id', jsonParser, CategoryController.getUpdateCategory);
+    // categoryRouter.put('/update/:id', jsonParser, CategoryController.updateCategory);
 
     // // Route pour supprimer une catégorie
-    // categoryRouter.delete('/:id', jsonParser, CategoryController.getDeleteCategory);
+    // categoryRouter.delete('delete/:id', jsonParser, CategoryController.deleteCategory);
 
     app.use('/category', categoryRouter);
 };
