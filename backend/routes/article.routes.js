@@ -1,22 +1,39 @@
 import express from 'express';
-import { ArticleController } from '../controllers/article.controller.js';
+import ArticleController from '../controllers/article.controller.js';
+import bodyParser from 'body-parser';
 
 const initArticleRoutes = (app) => {
     const articleRouter = express.Router();
+    const jsonParser = bodyParser.json();
 
     // Route de test
     articleRouter.get('/test', (req, res) => {
         res.send('Route de test fonctionne');
     });
 
-    // // Définir les routes des articles
-    // articleRouter.get('/:id', ArticleController.getArticleById);
+    // Route pour ajouter une nouvelle article
+    articleRouter.post('/add', jsonParser, ArticleController.addArticle);
 
-    // articleRouter.post('/addArticle', ArticleController.createArticle);
 
-    // articleRouter.put('/:id', ArticleController.updateArticle);
+    // Route pour mettre à jour un article
+    articleRouter.put('/update/:id', jsonParser, ArticleController.updateArticle);
 
-    // articleRouter.delete('/:id', ArticleController.deleteArticle);
+    // Route pour supprimer un article
+    articleRouter.delete('/delete/:id', jsonParser, ArticleController.deleteArticle)
+
+    // Pour récupérer toutes les articles
+    articleRouter.get('/', jsonParser, ArticleController.listArticle)
+
+    // Récupérer un article par son Id
+    articleRouter.get('/read/:id', jsonParser, ArticleController.getArticleById);
+
+    // Pagination des article
+    articleRouter.get('/page', jsonParser, ArticleController.listPaginationArticle)
+
+    // Recherche d'un article par utilisateur
+    articleRouter.get('/search', jsonParser, ArticleController.searchArticle)
+
+
 
     app.use('/article', articleRouter);
 };

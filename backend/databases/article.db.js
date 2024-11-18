@@ -3,10 +3,10 @@ import db from './init.db.js';
 const ArticleDB = {
 
     // Récupérer tous les articles
-    async listarticle() {
+    async listArticle(article_name, article_id) {
         try {
-            const query = 'SELECT * FROM Article;';
-            const [results] = await db.promise().execute(query);
+            const query = 'SELECT * FROM Article(article_name, article_id);';
+            const [results] = await db.promise().execute(query, article_id, article_name);
             return results;
         } catch (error) {
             console.error("Erreur lors de la sélection des articles");
@@ -27,7 +27,7 @@ const ArticleDB = {
     },
 
     // Mettre à jour un article
-    async UpdateArticle(article_id, article_name, article_content, article_state) {
+    async updateArticle(article_id, article_name, article_content, article_state) {
         try {
             const query = 'UPDATE article SET article_name = ?, article_content = ?, article_state = ?, article_updated = NOW() WHERE article_id = ?';
             const [results] = await db.promise().execute(query, [article_name, article_content, article_state, article_id]);
@@ -39,7 +39,7 @@ const ArticleDB = {
     },
 
     // Supprimer un article
-    async DeleteArticle(article_id) {
+    async deleteArticle(article_id) {
         try {
             const query = 'DELETE FROM article WHERE article_id = ?';
             const [results] = await db.promise().execute(query, [article_id]);
@@ -60,8 +60,47 @@ const ArticleDB = {
             console.error("Erreur lors de la récupération de l'article par ID ");
             return { error: error.message };
         }
-    }
-};
+    },
+
+    // Pagination d'un article
+    async listPaginationArticle(article_id = 0, Page = 5) {
+        try {
+            const query = 'SELECT * FROM article WHERE article_id > ? ORDER BY article_id LIMIT ?';
+            const [results] = await db.promise().execute(query, [article_id, Page]);
+            return results;
+        } catch (error) {
+            console.error("Erreur lors de la pagination des articles");
+            return { error: error.message };
+        }
+    },
+
+    // Recherche d'un artiche
+
+    async searchArticle(article_id, article_name) {
+        try {
+            const query = 'SELECT * FROM article LIKE article_id, article_name = ?, ?';
+            const [results] = await db.promise().execute(query, [article_id, article_name])
+            return results;
+        } catch (error) {
+            console.error("Erreur lors de la recherche d'un article");
+            return { error: error.message }
+        }
+
+    },
+    //  Liste des articles par utilisateur / Auteur
+
+    async searchByAuthor(fk_profile_id) {
+        try {
+            const query = 'SELECT * FROM article WHERE fk_profile_id = ?';
+            const [results] = await db.promise().execute(query, [fk_profile_id])
+            return results;
+        } catch (error) {
+            console.error("Erreur lors de la recherche d'un utilisateur");
+            return { error: error.message }
+        }
+    },
+}
+// Article aimé / pas aimé
 
 export default ArticleDB;
 

@@ -4,16 +4,22 @@ import { CommentController } from '../controllers/comment.controller.js';
 const commentRouter = express.Router();
 
 const initCommentRoutes = (app) => {
-    // Route pour créer un commentaire
-    commentRouter.post('/create', CommentController.createComment);
+    // Route pour récupérer tous les commentaires
+    commentRouter.get('/', express.json(), CommentController.getAllComments);
 
-    // Route pour récupérer les commentaires d'un article
-    commentRouter.get('/article/:articleId', CommentController.getCommentsByArticle);
+    // Route pour ajouter un nouveau commentaire
+    commentRouter.post('/add', express.json(), CommentController.createComment);
+
+    // Route pour récupérer un commentaire par son ID
+    commentRouter.get('/read/:id', express.json(), CommentController.getCommentById);
+
+    // Route pour mettre à jour un commentaire
+    commentRouter.put('/update/:id', express.json(), CommentController.updateComment);
 
     // Route pour supprimer un commentaire
-    commentRouter.delete('/:commentId', CommentController.deleteComment);
+    commentRouter.delete('/delete/:id', express.json(), CommentController.deleteComment);
 
-    return commentRouter; // Retourne le routeur
+    app.use('/comment', commentRouter);
 };
 
 export default initCommentRoutes;

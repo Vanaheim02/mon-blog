@@ -4,7 +4,7 @@ import CommentDb from '../databases/comment.db.js';
 const createComment = async (req, res) => {
     try {
         const { content, id_article } = req.body;
-        // Ajout d'un nouveau commentaire
+
         const newComment = await CommentDb.create(content, req.user.id, id_article);
         res.status(201).json({ message: "Commentaire créé avec succès.", comment: newComment });
     } catch (err) {

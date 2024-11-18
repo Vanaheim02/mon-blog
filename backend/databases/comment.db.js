@@ -1,20 +1,17 @@
 import db from './init.db.js';
 
 const CommentDb = {
-    // Ajouter un commentaire
     addComment: async (commentToAdd) => {
         try {
-            // Vérifie si les données du commentaire sont complètes
-            if (!commentToAdd || !commentToAdd.comment_content || !commentToAdd.fk_id_profile || !commentToAdd.fk_id_article) {
+            if (!commentToAdd || !commentToAdd.content || !commentToAdd.user_id || !commentToAdd.article_id) {
                 throw new Error('Données de commentaire incomplètes');
             }
 
-            const { comment_content, fk_id_profile, fk_id_article } = commentToAdd;
+            const { content, user_id, article_id } = commentToAdd;
 
-            // Créer un nouveau commentaire
             const newComment = await db.query(
-                "INSERT INTO comments (comment_content, comment_created_at, fk_id_profile, fk_id_article) VALUES (?, NOW(), ?, ?)",
-                [comment_content, fk_id_profile, fk_id_article]
+                "INSERT INTO comments (content, created_at, user_id, article_id) VALUES (?, NOW(), ?, ?)",
+                [content, user_id, article_id]
             );
 
             return newComment;
@@ -24,7 +21,6 @@ const CommentDb = {
         }
     },
 
-    // Récupérer tous les commentaires
     getAllComments: async () => {
         try {
             const comments = await db.query("SELECT * FROM comments");
@@ -35,7 +31,6 @@ const CommentDb = {
         }
     },
 
-    // Récupérer un commentaire par ID
     getCommentById: async (id_comment) => {
         try {
             const [comment] = await db.query("SELECT * FROM comments WHERE id_comment = ?", [id_comment]);
@@ -46,30 +41,26 @@ const CommentDb = {
         }
     },
 
-    // Mettre à jour un commentaire
     updateComment: async (id_comment, updatedComment) => {
         try {
-            if (!updatedComment || !updatedComment.comment_content) {
+            if (!updatedComment || !updatedComment.content) {
                 throw new Error('Contenu du commentaire manquant');
             }
 
-            const { comment_content } = updatedComment;
+            const { content } = updatedComment;
 
-            // Mettre à jour le commentaire
             await db.query(
-                "UPDATE comments SET comment_content = ?, comment_updated_at = NOW() WHERE id_comment = ?",
-                [comment_content, id_comment]
+                "UPDATE comments SET content = ?, created_at = NOW() WHERE id_comment = ?",
+                [content, id_comment]
             );
         } catch (error) {
-            console.error('Erreur lors de la mise à jour du commentaire :', error);
-            throw new Error('Erreur lors de la mise à jour du commentaire');
+            console.error("Erreur lors de la mise à jour du commentaire");
+            throw new Error("Erreur lors de la mise à jour du commentaire");
         }
     },
 
-    // Supprimer un commentaire
     deleteComment: async (id_comment) => {
         try {
-            // Supprimer le commentaire
             await db.query("DELETE FROM comments WHERE id_comment = ?", [id_comment]);
         } catch (error) {
             console.error('Erreur lors de la suppression du commentaire :', error);
@@ -79,5 +70,6 @@ const CommentDb = {
 };
 
 export default CommentDb;
+
 
 
