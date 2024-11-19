@@ -1,8 +1,6 @@
 import ArticleDb from '../databases/article.db.js';
 
 const ArticleController = {
-
-
     listArticle: async (req, res) => {
         try {
             const { article_name, article_id } = req.query;
@@ -93,80 +91,81 @@ const ArticleController = {
         }
     },
 
-    // Pagination d'article
-    async listPaginationArticle(req, res) {
+    // // Pagination d'article
+    // async listPaginationArticle(req, res) {
 
-        try {
-            const page = Math.max(1, parseInt(req.query.page) || 1);
-            const limit = Math.max(1, parseInt(req.query.limit) || 5);
-            const offset = (page - 1) * limit;
+    //     try {
+    //         const page = Math.max(1, parseInt(req.query.page) || 1);
+    //         const limit = Math.max(1, parseInt(req.query.limit) || 5);
+    //         const offset = (page - 1) * limit;
 
-            const [countResult] = await db.promise().execute('SELECT COUNT(*) AS total FROM article');
-            const total = countResult[0].total;
-            const [articles] = await db.promise().execute(
-                'SELECT * FROM article LIMIT ? OFFSET ?',
-                [limit, offset]
-            );
+    //         const [countResult] = await db.promise().execute('SELECT COUNT(*) AS total FROM article');
+    //         const total = countResult[0].total;
+    //         const [articles] = await db.promise().execute(
+    //             'SELECT * FROM article LIMIT ? OFFSET ?',
+    //             [limit, offset]
+    //         );
 
-            if (articles.length === 0) {
-                return res.status(404).json({ message: "Aucun article trouvé." });
-            }
-            return res.json({
-                posts: articles,
-                page,
-                totalPosts: total
-            });
-        } catch (error) {
-            console.error(error);
-            return res.status(404).json({ error: "Aucun article trouvé." });
-        }
-    },
+    //         if (articles.length === 0) {
+    //             return res.status(404).json({ message: "Aucun article trouvé." });
+    //         }
+    //         return res.json({
+    //             posts: articles,
+    //             page,
+    //             totalPosts: total
+    //         });
+    //     } catch (error) {
+    //         console.error(error);
+    //         return res.status(404).json({ error: "Aucun article trouvé." });
+    //     }
+    // },
 
 
-    // Recherche d'un article
-    async searchArticle(req, res) {
-        const article_id = req.params.id;
-        const article_name = req.query.article_name;
+    // // Recherche d'un article
+    // async searchArticle(req, res) {
+    //     const article_id = req.params.id;
+    //     const article_name = req.query.article_name;
 
-        try {
-            if (!article_id || !article_name) {
-                return res.status(400).json({ message: "L'ID et le nom sont requis." });
-            }
+    //     try {
+    //         if (!article_id || !article_name) {
+    //             return res.status(400).json({ message: "L'ID et le nom sont requis." });
+    //         }
 
-            const query = 'SELECT * FROM article WHERE article_id = ? AND article_name LIKE ?';
-            const [results] = await db.promise().execute(query, [article_id, `%${article_name}%`]);
+    //         const query = 'SELECT * FROM article WHERE article_id = ? AND article_name LIKE ?';
+    //         const [results] = await db.promise().execute(query, [article_id, `%${article_name}%`]);
 
-            if (results.length === 0) {
-                return res.status(404).json({ message: "Aucun article trouvé." });
-            }
+    //         if (results.length === 0) {
+    //             return res.status(404).json({ message: "Aucun article trouvé." });
+    //         }
 
-            return res.json({ article: results[0] });
-        } catch (error) {
-            console.error(error);
-            return res.status(500).json({ error: "Aucun article trouvé" });
-        }
-    },
+    //         return res.json({ article: results[0] });
+    //     } catch (error) {
+    //         console.error(error);
+    //         return res.status(500).json({ error: "Aucun article trouvé" });
+    //     }
+    // },
 
-    async searchByAuthor(req, res) {
-        const fk_profile_id = req.params.id;
+    // async searchByAuthor(req, res) {
+    //     const fk_profile_id = req.params.id;
 
-        try {
-            if (!fk_profile_id) {
-                return res.status(400).json({ message: "L'ID de l'utilisateur est requis." });
-            }
-            let params = [fk_profile_id];
-            const [results] = await db.promise().execute(query, params);
+    //     try {
+    //         if (!fk_profile_id) {
+    //             return res.status(400).json({ message: "L'ID de l'utilisateur est requis." });
+    //         }
+    //         let params = [fk_profile_id];
+    //         const [results] = await db.promise().execute(query, params);
 
-            if (results.length === 0) {
-                return res.status(404).json({ message: "Aucun article trouvé pour cet utilisateur." });
-            }
+    //         if (results.length === 0) {
+    //             return res.status(404).json({ message: "Aucun article trouvé pour cet utilisateur." });
+    //         }
 
-            return res.json({ article: results });
-        } catch (error) {
-            console.error(error);
-            return res.status(500).json({ error: "Erreur serveur lors de la récupération des articles." });
-        }
-    }
+    //         return res.json({ article: results });
+    //     } catch (error) {
+    //         console.error(error);
+    //         return res.status(500).json({ error: "Erreur serveur lors de la récupération des articles." });
+    //     }
+    // }
 
 }
+
 export default ArticleController;
