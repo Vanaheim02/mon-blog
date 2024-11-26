@@ -33,8 +33,6 @@ const initUserRoutes = (app) => {
     // Supprimer le profil utilisateur
     //userRouter.delete('/user/:id/profile', UserController.deleteUserProfile);
 
-
-    // Monter le routeur sur l'application Express
     app.use('/user', userRouter);
 };
 
