@@ -11,10 +11,11 @@ const tools = {
     },
 
     validatePassword: (password) => {
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[/!@#$%^&*(),.?":{}|<>]).{8,}$/;
 
         if(typeof password === 'undefined' || !password || password.trim().length === 0)
             return false;
+
         return passwordRegex.test(password)
     },
 

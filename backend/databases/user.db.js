@@ -120,4 +120,4 @@ const UserDb = {
     */
 };
 
-export { UserDb };
+export default UserDb;

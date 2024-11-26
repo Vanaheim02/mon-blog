@@ -1,4 +1,4 @@
-import { UserDb } from '../databases/user.db.js';
+import UserDb from '../databases/user.db.js';
 import tools from '../functions.js';
 
 const UserController = {
@@ -19,16 +19,12 @@ const UserController = {
         }
 
         // Vérifier la longueur du mot de passe
-        if (!password || password.length <= 8) {
-            return res.status(400).json({ message: "Le mot de passe doit avoir au moins huit caractères" });
-        }
-
-        if (!password || password.trim().length === 0) {
-            return res.status(400).json({ message: "Le mot de passe ne peut pas être vide." });
+        if (password.length < 8 || password.length > 32) {
+            return res.status(400).json({ message: "Le mot de passe doit contenir entre 8 et 32 caractères" });
         }
 
         if (!tools.validatePassword(password)) {
-            return res.status(400).json({message: "Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial"});
+            return res.status(400).json({ message: "Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial" });
         }
 
         if (password !== passwordConfirm) {
@@ -50,91 +46,91 @@ const UserController = {
 
         return res.status(200).json({ message: "Utilisateur créé avec succès"});
     },
-    updateUserState: async (req, res) => {
-        try {
-            const { user_state, user_date_in = null, user_date_out = null } = req.body;
-            const user_id = req.params.id;
+    // updateUserState: async (req, res) => {
+    //     try {
+    //         const { user_state, user_date_in = null, user_date_out = null } = req.body;
+    //         const user_id = req.params.id;
 
-            if (!user_id || !user_state || !user_date_in) {
-                return res.status(400).json({ error: "Tous les champs sont obligatoires" });
-            }
+    //         if (!user_id || !user_state || !user_date_in) {
+    //             return res.status(400).json({ error: "Tous les champs sont obligatoires" });
+    //         }
 
-            const result = await UserDb.updateUserState(user_id, user_state, user_date_in, user_date_out);
-            if (result) {
-                res.status(200).json({ message: "État de l'utilisateur mis à jour avec succès" });
-            } else {
-                res.status(404).json({ error: "Utilisateur non trouvé ou erreur lors de la mise à jour" });
-            }
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: "Erreur lors de la mise à jour" });
-        }
-    },
-
-
-    // Profil utilisateur :
-
-    getUserProfile: async (req, res) => {
-        try {
-            const user_id = req.params.id;
-
-            if (!user_id) {
-                return res.status(400).json({ error: "L'ID utilisateur est requis" });
-            }
-
-            const profile = await UserDb.getProfileByUserId(user_id);
-            if (profile) {
-                res.status(200).json({ message: "Profil utilisateur récupéré avec succès"});
-            } else {
-                res.status(404).json({ error: "Profil non trouvé" });
-            }
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: "Erreur lors de la récupération du profil utilisateur" });
-        }
-    },
-    updateUserProfile: async (req, res) => {
-        try {
-            const { profile_state, profile_rank, profile_image } = req.body;
-            const user_id = req.params.id;
-
-            if (!user_id || !profile_state) {
-                return res.status(400).json({ error: "Tous les champs sont obligatoires" });
-            }
-
-            const result = await UserDb.updateProfile(user_id, profile_state, profile_rank, profile_image);
-            if (result) {
-                res.status(200).json({ message: "Profil utilisateur mis à jour avec succès" });
-            } else {
-                res.status(404).json({ error: "Profil non trouvé ou erreur lors de la mise à jour" });
-            }
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: "Erreur lors de la mise à jour du profil utilisateur" });
-        }
-    },
+    //         const result = await UserDb.updateUserState(user_id, user_state, user_date_in, user_date_out);
+    //         if (result) {
+    //             res.status(200).json({ message: "État de l'utilisateur mis à jour avec succès" });
+    //         } else {
+    //             res.status(404).json({ error: "Utilisateur non trouvé ou erreur lors de la mise à jour" });
+    //         }
+    //     } catch (error) {
+    //         console.error(error);
+    //         res.status(500).json({ error: "Erreur lors de la mise à jour" });
+    //     }
+    // },
 
 
-    deleteUserProfile: async (req, res) => {
-        try {
-            const user_id = req.params.id;
+    // // Profil utilisateur :
 
-            const userExist = await UserDb.getUserById(user_id);
-            if (!userExist) {
-                return res.status(404).json({ error: 'Utilisateur introuvable' });
-            }
+    // getUserProfile: async (req, res) => {
+    //     try {
+    //         const user_id = req.params.id;
 
-            const profileDeleteResult = await UserDb.deleteProfile(user_id);
-            if (profileDeleteResult.error) {
-                return res.status(500).json({ error: 'Erreur lors de la suppression du profil utilisateur' });
-            }
+    //         if (!user_id) {
+    //             return res.status(400).json({ error: "L'ID utilisateur est requis" });
+    //         }
 
-            res.status(200).json({ message: "Utilisateur et profil supprimés avec succès" });
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: 'Erreur lors de la suppression de l\'utilisateur' });
-        }
-    }
+    //         const profile = await UserDb.getProfileByUserId(user_id);
+    //         if (profile) {
+    //             res.status(200).json({ message: "Profil utilisateur récupéré avec succès"});
+    //         } else {
+    //             res.status(404).json({ error: "Profil non trouvé" });
+    //         }
+    //     } catch (error) {
+    //         console.error(error);
+    //         res.status(500).json({ error: "Erreur lors de la récupération du profil utilisateur" });
+    //     }
+    // },
+    // updateUserProfile: async (req, res) => {
+    //     try {
+    //         const { profile_state, profile_rank, profile_image } = req.body;
+    //         const user_id = req.params.id;
+
+    //         if (!user_id || !profile_state) {
+    //             return res.status(400).json({ error: "Tous les champs sont obligatoires" });
+    //         }
+
+    //         const result = await UserDb.updateProfile(user_id, profile_state, profile_rank, profile_image);
+    //         if (result) {
+    //             res.status(200).json({ message: "Profil utilisateur mis à jour avec succès" });
+    //         } else {
+    //             res.status(404).json({ error: "Profil non trouvé ou erreur lors de la mise à jour" });
+    //         }
+    //     } catch (error) {
+    //         console.error(error);
+    //         res.status(500).json({ error: "Erreur lors de la mise à jour du profil utilisateur" });
+    //     }
+    // },
+
+
+    // deleteUserProfile: async (req, res) => {
+    //     try {
+    //         const user_id = req.params.id;
+
+    //         const userExist = await UserDb.getUserById(user_id);
+    //         if (!userExist) {
+    //             return res.status(404).json({ error: 'Utilisateur introuvable' });
+    //         }
+
+    //         const profileDeleteResult = await UserDb.deleteProfile(user_id);
+    //         if (profileDeleteResult.error) {
+    //             return res.status(500).json({ error: 'Erreur lors de la suppression du profil utilisateur' });
+    //         }
+
+    //         res.status(200).json({ message: "Utilisateur et profil supprimés avec succès" });
+    //     } catch (error) {
+    //         console.error(error);
+    //         res.status(500).json({ error: 'Erreur lors de la suppression de l\'utilisateur' });
+    //     }
+    // }
 
 
 
