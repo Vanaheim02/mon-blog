@@ -1,5 +1,9 @@
 import mysql from 'mysql2';
 
+const ACTIVE = 'active';
+const ARCHIVED = 'archived';
+const DELETED = 'deleted';
+
 const pool = mysql.createPool({
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
@@ -14,6 +18,8 @@ const pool = mysql.createPool({
     keepAliveInitialDelay: 0
 });
 
+const poolQuery = (query, data = []) => pool.promise().execute(query, data);
+
 pool.getConnection((err, connection) => {
     if (err) {
         return console.error('Erreur de connexion à la base de données :', err.stack);
@@ -21,4 +27,4 @@ pool.getConnection((err, connection) => {
     console.log('Connecté à la base de données avec l\'ID : ', connection.threadId);
 });
 
-export default pool;
+export default { pool, poolQuery, ACTIVE, ARCHIVED, DELETED };

@@ -127,10 +127,7 @@ const CategoryController = {
             res.status(500).json({ error: "Erreur lors de la mise à jour de la catégorie." });
         }
     },
-
-
     // TODO: Supprimer une catégorie par son ID
-
     deleteCategory: async (req, res) => {
         const category_id = req.params.id;
 
@@ -151,8 +148,7 @@ const CategoryController = {
             res.status(500).json({ error: "Erreur lors de la suppression de la catégorie." });
         }
 
-    },
-
+    }
 };
 
 export default CategoryController;

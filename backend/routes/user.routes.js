@@ -1,22 +1,41 @@
+import express from 'express';
+import UserController from '../controllers/user.controller.js';
+import bodyParser from 'body-parser';
+
+const userRouter = express.Router();
+const jsonParser = bodyParser.json();
+
 const initUserRoutes = (app) => {
-    const userRouter = express.Router();
 
     // Route pour créer un utilisateur
-    userRouter.post('/create', UsersController.createUser);
+    userRouter.post('/create', jsonParser, UserController.createUser);
 
-    // Route pour se connecter
-    userRouter.post('/login', UsersController.login);
+    // Route pour mettre à jour un utilisateur
+    userRouter.put('/user/:id/state', jsonParser, UserController.updateUserState);
 
-    // Route pour changer de mot de passe (authentification requise)
-    userRouter.put('/updatePassword', jwtMdlwr, UsersController.updatePassword);
+    // // Route pour se connecter
+    // userRouter.post('/login', jsonParser, UserController.login);
 
-    // Route pour supprimer un utilisateur (authentification requise)
-    userRouter.delete('/deleteUser', jwtMdlwr, UsersController.deleteUser);
+    // // Route pour changer de mot de passe
+    // userRouter.put('/updatePassword', jsonParser, UserController.updatePassword);
+
+    // // Route pour supprimer un utilisateur
+    // userRouter.delete('/deleteUser', jsonParser, UserController.deleteUser);
+
+
+    // Profil utilisateur
+
+    //userRouter.get('/user/:id/profile', UserController.getUserProfile);
+
+    // Mets à jour le profil utilisateur
+    //userRouter.put('/user/:id/profile', jsonParser, UserController.updateUserProfile);
+
+    // Supprimer le profil utilisateur
+    //userRouter.delete('/user/:id/profile', UserController.deleteUserProfile);
+
 
     // Monter le routeur sur l'application Express
-    app.use('/users', userRouter);
+    app.use('/user', userRouter);
 };
 
 export default initUserRoutes;
-
-

@@ -1,6 +1,6 @@
 import CommentDb from '../databases/comment.db.js';
 
-// Fonctionnalités pour tous les utilisateurs
+
 const createComment = async (req, res) => {
     try {
         const { content, id_article } = req.body;

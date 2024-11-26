@@ -26,7 +26,7 @@ const CategoryDb = {
             if (fk_category_parent !== null)
                 data.push(fk_category_parent);
 
-            let [results] = await db.promise().execute(query, data);
+            let [results] = await db.poolQuery(query, data);
             return results;
         } catch (error) {
             console.error('Erreur lors de la sélection :', error);

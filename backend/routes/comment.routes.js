@@ -19,6 +19,19 @@ const initCommentRoutes = (app) => {
     // Route pour supprimer un commentaire
     commentRouter.delete('/delete/:id', express.json(), CommentController.deleteComment);
 
+    // Route pour récupérer tous les commentaires d'un article
+    commentRouter.get('/article/:article_id', express.json(), CommentController.getCommentsByArticle);
+
+    // Route pour récupérer tous les commentaires d'un utilisateur
+    commentRouter.get('/user/:id_user', express.json(), CommentController.getCommentsByUser);
+
+    // Route pour la pagination des commentaires
+    commentRouter.get('/pagination', express.json(), CommentController.paginateComments);
+
+    // Route pour ajouter un like à un commentaire
+    commentRouter.post('/like/:id', express.json(), CommentController.likeComment);
+
+
     app.use('/comment', commentRouter);
 };
 
