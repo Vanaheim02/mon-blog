@@ -1,20 +1,28 @@
 import db from './init.db.js';
 
 const UserDb = {
-    // Création d'un utilisateur
-    createUser: async (user_mail, user_password, username = null, profile_image = null) => {
+    createUser: async (user_mail, user_password, user_name, user_firstname) => {
+        if (!user_mail || !user_password || !user_name || !user_firstname) {
+            throw new Error("Tous les champs sont obligatoires.");
+        }
         const query = `
-            INSERT INTO users (user_mail, user_password, username, profile_image)
+            INSERT INTO user (user_mail, user_password, user_name, user_firstname)
             VALUES (?, ?, ?, ?);
         `;
-        const result = await db(query, [user_mail, user_password, username, profile_image]);
-        return result;
+
+        try {
+            const [result] = await db.poolQuery(query, [user_mail, user_password, user_name, user_firstname]);
+            return result;
+        } catch (error) {
+            console.error("Erreur lors de l'insertion dans la base de données");
+            throw new Error("Erreur lors de la création de l'utilisateur");
+        }
     },
 
     // Mise à jour de l'état de l'utilisateur
     updateUserState: async (user_id, user_state, user_date_in, user_date_out = null) => {
         const query = `
-            UPDATE users
+            UPDATE user
             SET user_state = ?, user_date_in = ?, user_date_out = ?
             WHERE user_id = ?;
         `;
@@ -22,41 +30,47 @@ const UserDb = {
         return result;
     },
 
+    /*
     // Connexion de l'utilisateur
     signIn: async (user_mail) => {
         const query = `
             SELECT *
-            FROM users
+            FROM user
             WHERE user_mail = ?;
         `;
         const result = await db(query, [user_mail]);
         return result;
     },
+    */
 
+    /*
     // Suppression d'un utilisateur
     deleteUser: async (id_user) => {
         const query = `
-            DELETE FROM users
+            DELETE FROM user
             WHERE user_id = ?;
         `;
         const result = await db(query, [id_user]);
         return result;
     },
-       // Mise à jour du mot de passe de l'utilisateur
-       updatePassword: async (id_user, hashedPassword) => {
+    */
+
+    /*
+    // Mise à jour du mot de passe de l'utilisateur
+    updatePassword: async (id_user, hashedPassword) => {
         const query = `
-            UPDATE users
+            UPDATE user
             SET user_password = ?
             WHERE user_id = ?;
         `;
         const result = await db(query, [hashedPassword, id_user]);
         return result;
     },
+    */
 
+    /*
     // Partie profil utilisateur
-
-
-     createProfile: async (profil_id, profile_pseudo, profile_state, profile_rank) => {
+    createProfile: async (profil_id, profile_pseudo, profile_state, profile_rank) => {
         const query = `
             INSERT INTO profiles (fk_user_id, profile_pseudo, profile_state, profile_rank)
             VALUES (?, ?, ?, ?);
@@ -64,7 +78,6 @@ const UserDb = {
         const result = await db(query, [profil_id, profile_pseudo, profile_state, profile_rank]);
         return result;
     },
-
 
     getProfileByUserId: async (profil_id) => {
         const query = `
@@ -92,7 +105,8 @@ const UserDb = {
         const result = await db(query, [profile_id]);
         return result;
     },
-
+    */
+//};
 
     /*
     // Vérifie si l'email est disponible (pas déjà enregistré)

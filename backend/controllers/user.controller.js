@@ -2,50 +2,56 @@ import UserDb from '../databases/user.db.js';
 import tools from '../functions.js';
 
 const UserController = {
-    // Création d'un utilisateur
     createUser: async (req, res) => {
-        console.log('Données reçues :', req.body)
-        const { name, firstname, mail, password, passwordConfirm } = req.body;
+        try {
+            const { name, firstname, mail, password, passwordConfirm } = req.body;
 
-        if(typeof name === 'undefined' || !name || name.trim().length < 2)
-            res.status(400).json({ message: "La longueur du nom doit être strictement supérieure à 2" });
+            // Vérification de la validité des champs
+            if (!name || name.trim().length < 2) {
+                return res.status(400).json({ message: "Le nom doit être valide et avoir au moins 2 caractères." });
+            }
 
-        if(typeof firstname === 'undefined' || !firstname || firstname.trim().length < 2)
-            res.status(400).json({ message: "La longueur du prénom doit être strictement supérieure à 2" });
+            if (!firstname || firstname.trim().length < 2) {
+                return res.status(400).json({ message: "Le prénom doit être valide et avoir au moins 2 caractères." });
+            }
 
-        // Vérifie si l'adresse mail est valide
-        if (!tools.validateEmail(mail)) {
-            return res.status(400).json({ message: "Email invalide !" });
+            if (!tools.validateEmail(mail)) {
+                return res.status(400).json({ message: "L'email est invalide." });
+            }
+
+            if (password.length < 8 || password.length > 32) {
+                return res.status(400).json({ message: "Le mot de passe doit contenir entre 8 et 32 caractères." });
+            }
+
+            if (!tools.validatePassword(password)) {
+                return res.status(400).json({ message: "Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial." });
+            }
+
+            if (password !== passwordConfirm) {
+                return res.status(400).json({ message: "Les mots de passe ne correspondent pas." });
+            }
+
+            // Hashage du mot de passe
+            let hashedPassword;
+            try {
+                hashedPassword = await tools.hashPassword(password);
+            } catch (error) {
+                return res.status(500).json({ message: "Erreur lors du hashage du mot de passe." });
+            }
+
+            const result = await UserDb.createUser(mail, hashedPassword, name, firstname);
+            if (!result || !result.affectedRows) {
+                return res.status(500).json({ message: "Erreur lors de la création de l'utilisateur." });
+            }
+
+            return res.status(201).json({ message: "Utilisateur créé avec succès !" });
+        } catch (error) {
+            console.error("Erreur inattendue :", error);
+            return res.status(500).json({ message: "Une erreur inattendue s'est produite." });
         }
-
-        // Vérifier la longueur du mot de passe
-        if (password.length < 8 || password.length > 32) {
-            return res.status(400).json({ message: "Le mot de passe doit contenir entre 8 et 32 caractères" });
-        }
-
-        if (!tools.validatePassword(password)) {
-            return res.status(400).json({ message: "Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial" });
-        }
-
-        if (password !== passwordConfirm) {
-            return res.status(400).json({ message: "Les mots de passe doivent être identiques" });
-        }
-
-        const hashedPasswordResult = await tools.hashPassword(password);
-        if (hashedPasswordResult.error) {
-            return res.status(500).json({ message: hashedPasswordResult.error });
-        }
-
-
-        const user_id = userResponse.insertId;
-
-        const profileResponse = await UserDb.createUserProfile(user_id);
-        if (profileResponse.error) {
-            return res.status(500).json({ message: profileResponse.error });
-        }
-
-        return res.status(200).json({ message: "Utilisateur créé avec succès"});
     },
+};
+
     // updateUserState: async (req, res) => {
     //     try {
     //         const { user_state, user_date_in = null, user_date_out = null } = req.body;
@@ -230,6 +236,6 @@ const UserController = {
     //         res.status(500).json({ error: "Erreur lors de la suppression de l'utilisateur." });
     //     }
     // }
-}
+
 
 export default UserController;
