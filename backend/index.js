@@ -7,6 +7,7 @@ import initMiddlewares from './middlewares/init.mdlwr.js';
 const app = express();
 const PORT = process.env.APP_PORT || 5000;
 
+
 // Initialisation des composants
 initMiddlewares(app);
 initRoutes(app);

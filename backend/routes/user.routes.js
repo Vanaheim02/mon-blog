@@ -11,7 +11,8 @@ const initUserRoutes = (app) => {
     userRouter.post('/create', jsonParser, UserController.createUser);
 
     // Route pour mettre à jour un utilisateur
-    // userRouter.put('/user/:id/state', jsonParser, UserController.updateUserState);
+    userRouter.put('/user/:id/state', jsonParser, UserController.updateUserState);
+
 
     // // Route pour se connecter
     // userRouter.post('/login', jsonParser, UserController.login);

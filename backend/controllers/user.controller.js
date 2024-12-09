@@ -46,32 +46,85 @@ const UserController = {
 
             return res.status(201).json({ message: "Utilisateur créé avec succès !" });
         } catch (error) {
-            console.error("Erreur inattendue :", error);
+
+            console.error("Erreur inattendue", error);
             return res.status(500).json({ message: "Une erreur inattendue s'est produite." });
         }
     },
-};
 
-    // updateUserState: async (req, res) => {
-    //     try {
-    //         const { user_state, user_date_in = null, user_date_out = null } = req.body;
-    //         const user_id = req.params.id;
+    // Fonction pour mettre à jour l'état de l'utilisateur
+    updateUserState: async (req, res) => {
 
-    //         if (!user_id || !user_state || !user_date_in) {
-    //             return res.status(400).json({ error: "Tous les champs sont obligatoires" });
-    //         }
+        try {
+            const { user_state, user_date_in, user_date_out} = req.body;
+            const user_id = req.params.id;
 
-    //         const result = await UserDb.updateUserState(user_id, user_state, user_date_in, user_date_out);
-    //         if (result) {
-    //             res.status(200).json({ message: "État de l'utilisateur mis à jour avec succès" });
-    //         } else {
-    //             res.status(404).json({ error: "Utilisateur non trouvé ou erreur lors de la mise à jour" });
-    //         }
-    //     } catch (error) {
-    //         console.error(error);
-    //         res.status(500).json({ error: "Erreur lors de la mise à jour" });
-    //     }
-    // },
+            if (!user_id || !user_state || !user_date_in) {
+                return res.status(400).json({ error: "Tous les champs sont obligatoires" });
+            }
+
+            const result = await UserDb.updateUserState(user_id, user_state, user_date_in, user_date_out);
+
+            if (result && result.affectedRows > 0) {
+                return res.status(200).json({ message: "État de l'utilisateur mis à jour avec succès" });
+            } else {
+
+                return res.status(404).json({ error: "Utilisateur non trouvé ou erreur lors de la mise à jour" });
+            }
+        } catch (error) {
+
+            console.error("Erreur  lors de la mise à jour de l'état de l'utilisateur");
+            return res.status(500).json({ error: "Erreur lors de la mise à jour" });
+        }
+    },
+
+
+     // Ajouter des permissions à un utilisateur
+    createPermission: async (req, res) => {
+        try {
+            const { permission_label, permission_slug } = req.body;
+
+        if (!permission_label || !permission_slug) {
+            return res.status(400).json({ error: "Le label et l'identifiant de la permission sont obligatoires" });
+        }
+
+        const result = await UserDb.createPermission(permission_label, permission_slug);
+
+        if (result && result.affectedRows > 0) {
+            return res.status(201).json({ message: "Permission créée avec succès" });
+        } else {
+            return res.status(500).json({ error: "Erreur lors de la création des permissions" });
+        }
+
+    } catch (error) {
+        console.error("Erreur lors de la création des permissions");
+        return res.status(500).json({ error: "Erreur lors de la création des permissions" });
+    }
+},
+
+    // Liée les permissions au profils
+
+    permissionProfil: async (req, res) => {
+        try {
+            const { fk_permission_id, fk_profil_id } = req.body;
+
+            if (!fk_permission_id || !fk_profil_id) {
+                return res.status(400).json({ error: "Les identifiants de permission et de profil sont requis" });
+            }
+
+            const result = await UserDb.permissionProfil(fk_permission_id, fk_profil_id);
+
+            if (result && result.affectedRows > 0) {
+                return res.status(201).json({ message: "Liaison du profil et de la permission réussie" });
+            } else {
+                return res.status(500).json({ error: "Erreur lors de la liaison du profil et de la permission" });
+            }
+        } catch (error) {
+            console.error("Erreur lors de la liaison du profil et de la permission");
+            return res.status(500).json({ error: "Une erreur interne est survenue" });
+        }
+    }
+
 
 
     // // Profil utilisateur :
@@ -236,6 +289,6 @@ const UserController = {
     //         res.status(500).json({ error: "Erreur lors de la suppression de l'utilisateur." });
     //     }
     // }
-
+}
 
 export default UserController;
