@@ -17,59 +17,58 @@ const UserDb = {
             console.error('Erreur lors de l\'insertion :', error);
             return { error: error.message };
         }
-    },
-
-    // Mise à jour de l'état de l'utilisateur
-    updateUserState: async (user_id, user_state, user_date_in, user_date_out) => {
-        const query = `
-            UPDATE user
-            SET user_state = ?, user_date_in = ?, user_date_out = ?
-            WHERE user_id = ?;
-        `;
-        const result= await db.poolQuery(query, [user_state, user_date_in, user_date_out, user_id]);
-        return result;
-    },
-
-    // Ajouter des permissions à un utilisateur
-    createPermission: async (permission_label, permission_slug) => {
-        if (!permission_label || !permission_slug) {
-            throw new Error("Les champs description et identifiant sont requis");
-        }
-
-    const query = `
-       INSERT INTO permission (permission_label, permission_slug)
-       VALUES (?, ?)
-    `;
-
-    try {
-       const [result] = await db.poolQuery(query, [permission_label, permission_slug]);
-       return result;
-    } catch (error) {
-       console.error("Erreur lors de l'insertion des permissions");
-       throw new Error("Erreur lors de l'insertion des permissions");
     }
- },
 
-    // Liée les permissions aux profils
+    // // Mise à jour de l'état de l'utilisateur
+    // updateUserState: async (user_id, user_state, user_date_in, user_date_out) => {
+    //     const query = `
+    //         UPDATE user
+    //         SET user_state = ?, user_date_in = ?, user_date_out = ?
+    //         WHERE user_id = ?;
+    //     `;
+    //     const result= await db.poolQuery(query, [user_state, user_date_in, user_date_out, user_id]);
+    //     return result;
+    // },
 
-    permissionProfil: async (fk_permission_id, fk_profil_id) => {
-        if (!fk_permission_id || !fk_profil_id) {
-            throw new Error("Les identifiants de permission et de profil sont requis");
-        }
+    // // Ajouter des permissions à un utilisateur
+    // createPermission: async (permission_label, permission_slug) => {
+    //     if (!permission_label || !permission_slug) {
+    //         throw new Error("Les champs description et identifiant sont requis");
+    //     }
 
-        const query = `
-            INSERT INTO profiles_permission (fk_permission_id, fk_profil_id)
-            VALUES (?, ?)
-        `;
+    // const query = `
+    //    INSERT INTO permission (permission_label, permission_slug)
+    //    VALUES (?, ?)
+    // `;
 
-        try {
-            const [result] = await db.poolQuery(query, [fk_permission_id, fk_profil_id]);
-            return result;
-        } catch (error) {
-            console.error("Erreur lors de la liaison du profil et de la permission");
-            throw new Error("Erreur lors de la liaison du profil et de la permission");
-        }
-    },
+    // try {
+    //    const [result] = await db.poolQuery(query, [permission_label, permission_slug]);
+    //    return result;
+    // } catch (error) {
+    //    console.error("Erreur lors de l'insertion des permissions");
+    //    throw new Error("Erreur lors de l'insertion des permissions");
+    // }
+
+    // // Liée les permissions aux profils
+
+    // permissionProfil: async (fk_permission_id, fk_profil_id) => {
+    //     if (!fk_permission_id || !fk_profil_id) {
+    //         throw new Error("Les identifiants de permission et de profil sont requis");
+    //     }
+
+    //     const query = `
+    //         INSERT INTO profiles_permission (fk_permission_id, fk_profil_id)
+    //         VALUES (?, ?)
+    //     `;
+
+    //     try {
+    //         const [result] = await db.poolQuery(query, [fk_permission_id, fk_profil_id]);
+    //         return result;
+    //     } catch (error) {
+    //         console.error("Erreur lors de la liaison du profil et de la permission");
+    //         throw new Error("Erreur lors de la liaison du profil et de la permission");
+    //     }
+    // },
 
 
 
@@ -113,33 +112,13 @@ const UserDb = {
     },
     */
 
-
-
-
-     //Partie profil utilisateur
-    createProfile: async (fk_user_id, profile_pseudo, profile_state, profile_rank) => {
-        if (!fk_user_id || !profile_pseudo){
-        throw new Error ("L'id du user et le pseudo du profil sont requis");
-        }
-        const query = `
-            INSERT INTO profiles (fk_user_id, profile_pseudo, profile_state, profile_rank)
-            VALUES (?, ?, ?, ?);
-        `;
-        try {
-        const result = await db(query, [fk_user_id, profile_pseudo, profile_state, profile_rank]);
-        return result;
-        } catch (error) {
-            console.error(error)
-        }
-    },
-
-    getProfileByUserId: async (fk_user_id) => {
-        const query = `
-            SELECT * FROM profiles WHERE fk_user_id = ?;
-        `;
-        const result = await db(query, [fk_user_id]);
-        return result;
-    },
+    // getProfileByUserId: async (fk_user_id) => {
+    //     const query = `
+    //         SELECT * FROM profiles WHERE fk_user_id = ?;
+    //     `;
+    //     const result = await db(query, [fk_user_id]);
+    //     return result;
+    // },
 
     //updateProfile: async (profile_id, profile_pseudo, profile_state, profile_rank) => {
     //    const query = `
