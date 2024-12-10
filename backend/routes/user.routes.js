@@ -11,7 +11,7 @@ const initUserRoutes = (app) => {
     userRouter.post('/create', jsonParser, UserController.createUser);
 
     // Route pour mettre à jour un utilisateur
-    userRouter.put('/user/:id/state', jsonParser, UserController.updateUserState);
+    // userRouter.put('/user/:id/state', jsonParser, UserController.updateUserState);
 
     // Route pour créer une permission
    // userRouter.post('/createPermission', UserController.createPermission);
@@ -31,7 +31,7 @@ const initUserRoutes = (app) => {
 
     // Profil utilisateur
 
-    userRouter.post('/user/:id/profile', UserController.getUserProfile);
+    // userRouter.post('/user/:id/profile', UserController.getUserProfile);
 
 
     // Mets à jour le profil utilisateur
