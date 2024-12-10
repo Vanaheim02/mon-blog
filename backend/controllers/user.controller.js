@@ -123,31 +123,37 @@ const UserController = {
             console.error("Erreur lors de la liaison du profil et de la permission");
             return res.status(500).json({ error: "Une erreur interne est survenue" });
         }
+    },
+
+
+
+     // Profil utilisateur :
+
+     getUserProfile: async (req, res) => {
+        try {
+            const user_id = req.params.id;
+
+            if (!user_id) {
+                console.log("Aucun ID utilisateur fourni")
+                return res.status(400).json({ error: "L'ID utilisateur est requis" });
+            }
+
+            const profile = await UserDb.getProfileByUserId(user_id);
+
+            if (profile.length > 0) {
+                res.status(200).json({
+                    message: "Profil utilisateur récupéré avec succès",
+                    profile: profile[0]
+                });
+            } else {
+                res.status(404).json({ error: "Profil non trouvé" });
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: "Erreur lors de la récupération du profil utilisateur" });
+        }
     }
 
-
-
-    // // Profil utilisateur :
-
-    // getUserProfile: async (req, res) => {
-    //     try {
-    //         const user_id = req.params.id;
-
-    //         if (!user_id) {
-    //             return res.status(400).json({ error: "L'ID utilisateur est requis" });
-    //         }
-
-    //         const profile = await UserDb.getProfileByUserId(user_id);
-    //         if (profile) {
-    //             res.status(200).json({ message: "Profil utilisateur récupéré avec succès"});
-    //         } else {
-    //             res.status(404).json({ error: "Profil non trouvé" });
-    //         }
-    //     } catch (error) {
-    //         console.error(error);
-    //         res.status(500).json({ error: "Erreur lors de la récupération du profil utilisateur" });
-    //     }
-    // },
     // updateUserProfile: async (req, res) => {
     //     try {
     //         const { profile_state, profile_rank, profile_image } = req.body;

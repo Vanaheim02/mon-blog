@@ -31,7 +31,8 @@ const initUserRoutes = (app) => {
 
     // Profil utilisateur
 
-    //userRouter.get('/user/:id/profile', UserController.getUserProfile);
+    userRouter.get('/user/:id/profile', UserController.getUserProfile);
+
 
     // Mets à jour le profil utilisateur
     //userRouter.put('/user/:id/profile', jsonParser, UserController.updateUserProfile);

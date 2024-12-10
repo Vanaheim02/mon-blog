@@ -69,7 +69,7 @@ const UserDb = {
             console.error("Erreur lors de la liaison du profil et de la permission");
             throw new Error("Erreur lors de la liaison du profil et de la permission");
         }
-    }
+    },
 
 
 
@@ -113,8 +113,10 @@ const UserDb = {
     },
     */
 
-    /*
-    // Partie profil utilisateur
+
+
+
+     //Partie profil utilisateur
     createProfile: async (profil_id, profile_pseudo, profile_state, profile_rank) => {
         const query = `
             INSERT INTO profiles (fk_user_id, profile_pseudo, profile_state, profile_rank)
@@ -132,25 +134,25 @@ const UserDb = {
         return result;
     },
 
-    updateProfile: async (profile_id, profile_pseudo, profile_state, profile_rank) => {
-        const query = `
-            UPDATE profiles
-            SET profile_pseudo = ?, profile_state = ?, profile_rank = ?
-            WHERE profile_id = ?;
-        `;
-        const result = await db(query, [profile_pseudo, profile_state, profile_rank, profile_id]);
-        return result;
-    },
+    //updateProfile: async (profile_id, profile_pseudo, profile_state, profile_rank) => {
+    //    const query = `
+     //       UPDATE profiles
+     //       SET profile_pseudo = ?, profile_state = ?, profile_rank = ?
+     //       WHERE profile_id = ?;
+     //   `;
+     //   const result = await db(query, [profile_pseudo, profile_state, profile_rank, profile_id]);
+     //   return result;
+   // },
 
-    deleteProfile: async (profile_id) => {
-        const query = `
-            DELETE FROM profiles
-            WHERE profile_id = ?;
-        `;
-        const result = await db(query, [profile_id]);
-        return result;
-    },
-    */
+   // deleteProfile: async (profile_id) => {
+      //  const query = `
+       //     DELETE FROM profiles
+       //     WHERE profile_id = ?;
+       // `;
+      //  const result = await db(query, [profile_id]);
+      //  return result;
+   // },
+
 //};
 
     /*
