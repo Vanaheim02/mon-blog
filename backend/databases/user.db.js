@@ -126,7 +126,7 @@ const UserDb = {
         return result;
     },
 
-    getProfileByUserId: async (profil_id) => {
+    getProfileByUserId: async (profil_id,) => {
         const query = `
             SELECT * FROM profiles WHERE fk_user_id = ?;
         `;

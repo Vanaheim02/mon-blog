@@ -141,10 +141,7 @@ const UserController = {
             const profile = await UserDb.getProfileByUserId(user_id);
 
             if (profile.length > 0) {
-                res.status(200).json({
-                    message: "Profil utilisateur récupéré avec succès",
-                    profile: profile[0]
-                });
+                res.status(200).json({message: "Profil utilisateur récupéré avec succès"})
             } else {
                 res.status(404).json({ error: "Profil non trouvé" });
             }
