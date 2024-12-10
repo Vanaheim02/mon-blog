@@ -14,10 +14,10 @@ const initUserRoutes = (app) => {
     userRouter.put('/user/:id/state', jsonParser, UserController.updateUserState);
 
     // Route pour créer une permission
-    router.post('/createPermission', UserController.createPermission);
+   // userRouter.post('/createPermission', UserController.createPermission);
 
     // Route pour lier une permission à un profil
-    router.post('/permissionProfil', UserController.permissionProfil);
+    //userRouter.post('/permissionProfil', UserController.permissionProfil);
 
     // // Route pour se connecter
     // userRouter.post('/login', jsonParser, UserController.login);
@@ -31,7 +31,7 @@ const initUserRoutes = (app) => {
 
     // Profil utilisateur
 
-    userRouter.get('/user/:id/profile', UserController.getUserProfile);
+    userRouter.post('/user/:id/profile', UserController.getUserProfile);
 
 
     // Mets à jour le profil utilisateur
@@ -39,7 +39,6 @@ const initUserRoutes = (app) => {
 
     // Supprimer le profil utilisateur
     //userRouter.delete('/user/:id/profile', UserController.deleteUserProfile);
-
     app.use('/user', userRouter);
 };
 

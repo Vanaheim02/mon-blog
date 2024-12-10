@@ -117,20 +117,27 @@ const UserDb = {
 
 
      //Partie profil utilisateur
-    createProfile: async (profil_id, profile_pseudo, profile_state, profile_rank) => {
+    createProfile: async (fk_user_id, profile_pseudo, profile_state, profile_rank) => {
+        if (!fk_user_id || !profile_pseudo){
+        throw new Error ("L'id du user et le pseudo du profil sont requis");
+        }
         const query = `
             INSERT INTO profiles (fk_user_id, profile_pseudo, profile_state, profile_rank)
             VALUES (?, ?, ?, ?);
         `;
-        const result = await db(query, [profil_id, profile_pseudo, profile_state, profile_rank]);
+        try {
+        const result = await db(query, [fk_user_id, profile_pseudo, profile_state, profile_rank]);
         return result;
+        } catch (error) {
+            console.error(error)
+        }
     },
 
-    getProfileByUserId: async (profil_id,) => {
+    getProfileByUserId: async (fk_user_id) => {
         const query = `
             SELECT * FROM profiles WHERE fk_user_id = ?;
         `;
-        const result = await db(query, [profil_id]);
+        const result = await db(query, [fk_user_id]);
         return result;
     },
 

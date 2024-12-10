@@ -134,7 +134,7 @@ const UserController = {
             const user_id = req.params.id;
 
             if (!user_id) {
-                console.log("Aucun ID utilisateur fourni")
+                console.log("Aucun ID utilisateur n'est indiqué")
                 return res.status(400).json({ error: "L'ID utilisateur est requis" });
             }
 
