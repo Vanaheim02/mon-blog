@@ -13,6 +13,11 @@ const initUserRoutes = (app) => {
     // Route pour mettre à jour un utilisateur
     userRouter.put('/user/:id/state', jsonParser, UserController.updateUserState);
 
+    // Route pour créer une permission
+    router.post('/createPermission', UserController.createPermission);
+
+    // Route pour lier une permission à un profil
+    router.post('/permissionProfil', UserController.permissionProfil);
 
     // // Route pour se connecter
     // userRouter.post('/login', jsonParser, UserController.login);
