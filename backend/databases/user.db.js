@@ -14,8 +14,8 @@ const UserDb = {
             const [result] = await db.poolQuery(query, [user_mail, user_password, user_name, user_firstname]);
             return result;
         } catch (error) {
-            console.error("Erreur lors de l'insertion dans la base de données");
-            throw new Error("Erreur lors de la création de l'utilisateur");
+            console.error('Erreur lors de l\'insertion :', error);
+            return { error: error.message };
         }
     },
 
