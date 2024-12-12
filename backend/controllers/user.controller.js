@@ -13,20 +13,17 @@ const UserController = {
             }
 
             // TODO: Vérifier que le pseudo n'existe pas déjà (getUserByPseudo)
-
-                try {
-                    const getUserByPseudo = await UserDb.getUserByPseudo(pseudo);
-
-                    if (getUserByPseudo) {
-                        console.log("Ce pseudo existe déjà.");
-                        return res.status(400).json({ message: "Ce pseudo existe déjà" });
-                    } else {
-                        console.log("Le pseudo est disponible");
-                    }
-                } catch (error) {
-                    console.error("Erreur lors de la vérification du pseudo");
-                    return res.status(500).json({ message: "Erreur lors de la vérification du pseudo"});
+            try {
+                const getUserByPseudo = await UserDb.getUserByPseudo(pseudo);
+                if (getUserByPseudo && getUserByPseudo.length > 0) {
+                    return res.status(400).json({ message: "Ce pseudo existe déjà" });
                 }
+            } catch (error) {
+                console.error("Erreur lors de la vérification du pseudo");
+                return res.status(500).json({
+                    error: error.message
+                });
+            }
 
             // Vérification du nom et prénom
             if (!name || name.trim().length < 2) {
@@ -43,20 +40,17 @@ const UserController = {
             }
 
             // TODO: Vérifier que l'adresse mail n'existe pas déjà (getUserByMail)
-
             try {
                 const getUserByEmail = await UserDb.getUserByEmail(mail);
-
-                if (getUserByEmail) {
-                    return res.status(400).json({ message: "Cet email existe déjà" });
-                } else {
-                    console.log("L'email est disponible");
+                if (getUserByEmail && getUserByEmail.length > 0) {
+                    return res.status(400).json({ message: "Cet adresse mail est déjà associé à un autre compte" });
                 }
             } catch (error) {
                 console.error("Erreur lors de la vérification de l'email");
-                return res.status(500).json({ message: "Erreur lors de la vérification de l'email" });
+                return res.status(500).json({
+                    error: error.message
+                });
             }
-
 
             // Vérification du mot de passe
             if (password.length < 8 || password.length > 32) {
@@ -72,21 +66,23 @@ const UserController = {
             }
 
             // Hashage du mot de passe
-            let hashedPassword = await tools.hashPassword(password);
+            const hashedPassword = await tools.hashPassword(password);
 
             // Création de l'utilisateur dans la base de données
-            const dbResponse = await UserDb.createUser(pseudo, name, firstname, mail, hashedPassword);
+            const dbResponse = await UserDb.createUser(pseudo, name, firstname, mail, hashedPassword, avatar);
             if (typeof dbResponse.error !== 'undefined') {
                 return res.status(400).json({ error: dbResponse.error });
             }
 
             return res.status(201).json({ message: "Utilisateur créé avec succès !" });
+
         } catch (error) {
-            console.error("Erreur inattendue", error);
+            console.error("Erreur inattendue lors de la création de l'utilisateur", error);
             return res.status(500).json({ message: "Une erreur inattendue s'est produite." });
         }
-    },
+    }
 };
+
 
 
 

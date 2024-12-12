@@ -20,38 +20,31 @@ const UserDb = {
     },
 
     getUserByPseudo: async (pseudo) => {
-        const query =
-              "SELECT user_id FROM user WHERE user_pseudo = ?";
+        const query = `SELECT user_id FROM user WHERE user_pseudo = ?`;
 
         try {
-            const [result] = await db.poolQuery(query, [pseudo]);
-
-            if (Array.isArray(result) && result.length > 0) {
-                console.log("Le pseudo existe déjà.");
-                return true;
-            } else {
-                console.log("Le pseudo est disponible.");
-                return false;
-            }
+          const [result] = await db.pool.query(query, [pseudo]);
+          return result;
         } catch (error) {
-            console.error("Erreur lors de la vérification du pseudo:");
-            throw new Error("Erreur lors de la vérification du pseudo");
+          if (process.env.APP_ENV === 'dev') {
+            console.error(error.stack);
+          }
+          return { error: error.message };
         }
-    },
+      },
+
 
 
     getUserByEmail: async (email) => {
-        const query =
-        "SELECT user_id FROM user WHERE user_mail = ?";
+        const query = "SELECT user_id FROM user WHERE user_mail = ?";
 
         try {
             const [result] = await db.poolQuery(query, [email]);
-            if (Array.isArray(result) && result.length > 0) {return true;
-            } else {
-                return false;
-            }
+            return result;
         } catch (error) {
-            console.error("Erreur lors de la vérification de l'email:");
+            if (process.env.APP_ENV === 'dev') {
+                console.error(error.stack);
+            }
             throw new Error("Erreur lors de la vérification de l'email");
         }
     }
