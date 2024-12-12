@@ -1,20 +1,19 @@
 import db from './init.db.js';
 
 const UserDb = {
-    createUser: async (user_mail, user_password, user_name, user_firstname) => {
-        if (!user_mail || !user_password || !user_name || !user_firstname) {
-            throw new Error("Tous les champs sont obligatoires.");
-        }
+    createUser: async (user_pseudo, user_firstname, user_name, user_mail, user_password) => {
         const query = `
-            INSERT INTO user (user_mail, user_password, user_name, user_firstname)
-            VALUES (?, ?, ?, ?);
+            INSERT INTO user (user_pseudo, user_name, user_firstname, user_mail, user_password, user_state, user_date_in)
+            VALUES (?, ?, ?, ?, ?, ?, NOW());
         `;
 
         try {
-            const [result] = await db.poolQuery(query, [user_mail, user_password, user_name, user_firstname]);
+            const [result] = await db.poolQuery(query, [user_pseudo, user_firstname, user_name, user_mail, user_password, db.ACTIVE]);
             return result;
         } catch (error) {
-            console.error('Erreur lors de l\'insertion :', error);
+            if (process.env.APP_ENV == 'dev')
+                console.error(error.stack);
+
             return { error: error.message };
         }
     }

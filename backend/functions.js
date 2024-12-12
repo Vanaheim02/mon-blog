@@ -1,4 +1,5 @@
-import bcrypt from 'bcrypt'
+import { hash, compare } from "bcrypt";
+
 
 const tools = {
     validateEmail: (mail) => {
@@ -9,7 +10,6 @@ const tools = {
 
         return emailRegex.test(mail);
     },
-
     validatePassword: (password) => {
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[/!@#$%^&*(),.?":{}|<>]).{8,}$/;
 
@@ -18,13 +18,21 @@ const tools = {
 
         return passwordRegex.test(password)
     },
-
     hashPassword: async (password) => {
         try {
-            const passwordHash = await bcrypt.hash(password);
-            return { passwordHash };
-        } catch (error) {
-            return { error: 'Erreur lors du hachage du mot de passe.' };
+            let saltRounds = 11;
+            let hashedPassword;
+
+            await hash(password, saltRounds).then((hash) => {
+                hashedPassword = hash;
+            });
+
+            return hashedPassword;
+        } catch(error) {
+            if (process.env.APP_ENV == 'dev')
+                console.error(error.stack);
+
+            return { error: error.message };
         }
     }
 };

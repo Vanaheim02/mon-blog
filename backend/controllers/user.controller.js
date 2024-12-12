@@ -1,12 +1,24 @@
+import { hash } from 'bcrypt';
 import UserDb from '../databases/user.db.js';
 import tools from '../functions.js';
 
 const UserController = {
     createUser: async (req, res) => {
         try {
-            const { name, firstname, mail, password, passwordConfirm } = req.body;
+            const { pseudo, name, firstname, mail, password, passwordConfirm, avatar } = req.body;
 
             // Vérification de la validité des champs
+            if (!pseudo || pseudo.trim().length < 2 || pseudo.trim().length > 24){
+                return res.status(400).json({ message: "Le pseudo doit comprendre entre 2 et 24 caractères"})
+            }
+
+            // TODO: Vérifier que le pseudo n'existe pas déjà (getUserByPseudo)
+
+             const user = await getUserByPseudo(pseudo);
+             if (user) {
+                return res.status(400).json({message: "Ce pseudo existe déjà"})
+             }
+
             if (!name || name.trim().length < 2) {
                 return res.status(400).json({ message: "Le nom doit être valide et avoir au moins 2 caractères." });
             }
@@ -17,6 +29,13 @@ const UserController = {
 
             if (!tools.validateEmail(mail)) {
                 return res.status(400).json({ message: "L'email est invalide." });
+            }
+
+            // TODO: Vérifier que l'adresse mail n'existe pas déjà (getUserByMail)
+
+            const userByMail = await getUserByMail(mail);
+            if (userByMail) {
+                 return res.status(400).json({ message: "L'adresse mail existe déjà." });
             }
 
             if (password.length < 8 || password.length > 32) {
@@ -32,19 +51,11 @@ const UserController = {
             }
 
             // Hashage du mot de passe
-            let hashedPassword;
-            try {
-                hashedPassword = await tools.hashPassword(password);
-            } catch (error) {
-                return res.status(500).json({ message: "Erreur lors du hashage du mot de passe." });
-            }
+            let hashedPassword = await tools.hashPassword(password);
 
-            const result = await UserDb.createUser(mail, hashedPassword, name, firstname);
-            if (!result || !result.affectedRows) {
-                return res.status(500).json({ message: "Erreur lors de la création de l'utilisateur." });
-            }
-
-            // TODO: Créer le profil (requête à profile.db.js)
+            const dbResponse = await UserDb.createUser(pseudo, name, firstname, mail, hashedPassword);
+            if (typeof dbResponse.error !== 'undefined')
+                return res.status(400).json({ error: dbResponse.error });
 
             return res.status(201).json({ message: "Utilisateur créé avec succès !" });
         } catch (error) {
@@ -54,159 +65,6 @@ const UserController = {
         }
     },
 
-    // // Fonction pour mettre à jour l'état de l'utilisateur
-    // updateUserState: async (req, res) => {
-
-    //     try {
-    //         const { user_state, user_date_in, user_date_out} = req.body;
-    //         const user_id = req.params.id;
-
-    //         if (!user_id || !user_state || !user_date_in) {
-    //             return res.status(400).json({ error: "Tous les champs sont obligatoires" });
-    //         }
-
-    //         const result = await UserDb.updateUserState(user_id, user_state, user_date_in, user_date_out);
-
-    //         if (result && result.affectedRows > 0) {
-    //             return res.status(200).json({ message: "État de l'utilisateur mis à jour avec succès" });
-    //         } else {
-
-    //             return res.status(404).json({ error: "Utilisateur non trouvé ou erreur lors de la mise à jour" });
-    //         }
-    //     } catch (error) {
-
-    //         console.error("Erreur  lors de la mise à jour de l'état de l'utilisateur");
-    //         return res.status(500).json({ error: "Erreur lors de la mise à jour" });
-    //     }
-    // },
-
-
-    //  // Ajouter des permissions à un utilisateur
-    // createPermission: async (req, res) => {
-    //     try {
-    //         const { permission_label, permission_slug } = req.body;
-
-    //     if (!permission_label || !permission_slug) {
-    //         return res.status(400).json({ error: "Le label et l'identifiant de la permission sont obligatoires" });
-    //     }
-
-    //     const result = await UserDb.createPermission(permission_label, permission_slug);
-
-    //     if (result && result.affectedRows > 0) {
-    //         return res.status(201).json({ message: "Permission créée avec succès" });
-    //     } else {
-    //         return res.status(500).json({ error: "Erreur lors de la création des permissions" });
-    //     }
-
-    // } catch (error) {
-    //     console.error("Erreur lors de la création des permissions");
-    //     return res.status(500).json({ error: "Erreur lors de la création des permissions" });
-    // }
-    // },
-
-    // // Liée les permissions au profils
-
-    // permissionProfil: async (req, res) => {
-    //     try {
-    //         const { fk_permission_id, fk_profil_id } = req.body;
-
-    //         if (!fk_permission_id || !fk_profil_id) {
-    //             return res.status(400).json({ error: "Les identifiants de permission et de profil sont requis" });
-    //         }
-
-    //         const result = await UserDb.permissionProfil(fk_permission_id, fk_profil_id);
-
-    //         if (result && result.affectedRows > 0) {
-    //             return res.status(201).json({ message: "Liaison du profil et de la permission réussie" });
-    //         } else {
-    //             return res.status(500).json({ error: "Erreur lors de la liaison du profil et de la permission" });
-    //         }
-    //     } catch (error) {
-    //         console.error("Erreur lors de la liaison du profil et de la permission");
-    //         return res.status(500).json({ error: "Une erreur interne est survenue" });
-    //     }
-    // },
-
-
-
-    //  // Profil utilisateur :
-
-    //  getUserProfile: async (req, res) => {
-    //     try {
-    //         const user_id = req.params.id;
-
-    //         if (!user_id) {
-    //             console.log("Aucun ID utilisateur n'est indiqué")
-    //             return res.status(400).json({ error: "L'ID utilisateur est requis" });
-    //         }
-
-    //         const profile = await UserDb.getProfileByUserId(user_id);
-
-    //         if (profile.length > 0) {
-    //             res.status(200).json({message: "Profil utilisateur récupéré avec succès"})
-    //         } else {
-    //             res.status(404).json({ error: "Profil non trouvé" });
-    //         }
-    //     } catch (error) {
-    //         console.error(error);
-    //         res.status(500).json({ error: "Erreur lors de la récupération du profil utilisateur" });
-    //     }
-    // }
-
-    // updateUserProfile: async (req, res) => {
-    //     try {
-    //         const { profile_state, profile_rank, profile_image } = req.body;
-    //         const user_id = req.params.id;
-
-    //         if (!user_id || !profile_state) {
-    //             return res.status(400).json({ error: "Tous les champs sont obligatoires" });
-    //         }
-
-    //         const result = await UserDb.updateProfile(user_id, profile_state, profile_rank, profile_image);
-    //         if (result) {
-    //             res.status(200).json({ message: "Profil utilisateur mis à jour avec succès" });
-    //         } else {
-    //             res.status(404).json({ error: "Profil non trouvé ou erreur lors de la mise à jour" });
-    //         }
-    //     } catch (error) {
-    //         console.error(error);
-    //         res.status(500).json({ error: "Erreur lors de la mise à jour du profil utilisateur" });
-    //     }
-    // },
-
-
-    // deleteUserProfile: async (req, res) => {
-    //     try {
-    //         const user_id = req.params.id;
-
-    //         const userExist = await UserDb.getUserById(user_id);
-    //         if (!userExist) {
-    //             return res.status(404).json({ error: 'Utilisateur introuvable' });
-    //         }
-
-    //         const profileDeleteResult = await UserDb.deleteProfile(user_id);
-    //         if (profileDeleteResult.error) {
-    //             return res.status(500).json({ error: 'Erreur lors de la suppression du profil utilisateur' });
-    //         }
-
-    //         res.status(200).json({ message: "Utilisateur et profil supprimés avec succès" });
-    //     } catch (error) {
-    //         console.error(error);
-    //         res.status(500).json({ error: 'Erreur lors de la suppression de l\'utilisateur' });
-    //     }
-    // }
-
-
-
-   // Insérer l'utilisateur dans la base de données
-     //const mailExist = await UserDb.checkEmailAvailable(mail);
-     //if (!mailExist)
-    //return res.status(409).json({ error: 'L\'adresse mail est déjà utilisée.' });
-
-    //const userResponse = await UserDb.createUser(mail, hashedPasswordResult.hashed);
-    //if (userResponse.error) {
-    //return res.status(500).json({ message: userResponse.error });
-    //}
     // // Fonction pour que l'utilisateur puisse changer de mot de passe
     // updatePassword: async (req, res) => {
     //     try {
