@@ -18,6 +18,9 @@ const UserDb = {
         }
     }
 
+
+
+
     // // Mise à jour de l'état de l'utilisateur
     // updateUserState: async (user_id, user_state, user_date_in, user_date_out) => {
     //     const query = `
