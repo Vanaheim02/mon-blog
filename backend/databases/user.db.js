@@ -1,6 +1,7 @@
 import db from './init.db.js';
 
 const UserDb = {
+    // Fonction pour créer un utilisateur
     createUser: async (user_pseudo, user_firstname, user_name, user_mail, user_password) => {
         const query = `
             INSERT INTO user (user_pseudo, user_name, user_firstname, user_mail, user_password, user_state, user_date_in)
@@ -11,14 +12,52 @@ const UserDb = {
             const [result] = await db.poolQuery(query, [user_pseudo, user_firstname, user_name, user_mail, user_password, db.ACTIVE]);
             return result;
         } catch (error) {
-            if (process.env.APP_ENV == 'dev')
+            if (process.env.APP_ENV === 'dev') {
                 console.error(error.stack);
-
+            }
             return { error: error.message };
+        }
+    },
+
+    getUserByPseudo: async (pseudo) => {
+        const query =
+              "SELECT user_id FROM user WHERE user_pseudo = ?";
+
+        try {
+            const [result] = await db.poolQuery(query, [pseudo]);
+
+            if (Array.isArray(result) && result.length > 0) {
+                console.log("Le pseudo existe déjà.");
+                return true;
+            } else {
+                console.log("Le pseudo est disponible.");
+                return false;
+            }
+        } catch (error) {
+            console.error("Erreur lors de la vérification du pseudo:");
+            throw new Error("Erreur lors de la vérification du pseudo");
+        }
+    },
+
+
+    getUserByEmail: async (email) => {
+        const query =
+        "SELECT user_id FROM user WHERE user_mail = ?";
+
+        try {
+            const [result] = await db.poolQuery(query, [email]);
+            if (Array.isArray(result) && result.length > 0) {return true;
+            } else {
+                return false;
+            }
+        } catch (error) {
+            console.error("Erreur lors de la vérification de l'email:");
+            throw new Error("Erreur lors de la vérification de l'email");
         }
     }
 
 
+}
 
 
     // // Mise à jour de l'état de l'utilisateur
@@ -167,6 +206,6 @@ const UserDb = {
         return result;
     },
     */
-};
+
 
 export default UserDb;

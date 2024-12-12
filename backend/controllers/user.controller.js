@@ -13,19 +13,20 @@ const UserController = {
             }
 
             // TODO: Vérifier que le pseudo n'existe pas déjà (getUserByPseudo)
-            try {
-                const getUserByPseudo = ["creuvettedu12"];
 
-                if (getUserByPseudo.includes(pseudo)) {
-                    console.log("Le pseudo existe déjà");
-                    return res.status(400).json({ message: "Ce pseudo existe déjà" });
-                } else {
-                    console.log("Le pseudo est disponible");
+                try {
+                    const getUserByPseudo = await UserDb.getUserByPseudo(pseudo);
+
+                    if (getUserByPseudo) {
+                        console.log("Ce pseudo existe déjà.");
+                        return res.status(400).json({ message: "Ce pseudo existe déjà" });
+                    } else {
+                        console.log("Le pseudo est disponible");
+                    }
+                } catch (error) {
+                    console.error("Erreur lors de la vérification du pseudo");
+                    return res.status(500).json({ message: "Erreur lors de la vérification du pseudo"});
                 }
-            } catch (error) {
-                console.error("Erreur lors de la vérification du pseudo");
-                return res.status(500).json({ message: "Erreur lors de la vérification du pseudo" });
-            }
 
             // Vérification du nom et prénom
             if (!name || name.trim().length < 2) {
@@ -44,15 +45,12 @@ const UserController = {
             // TODO: Vérifier que l'adresse mail n'existe pas déjà (getUserByMail)
 
             try {
-                console.log("Vérification de l'email:", mail);
+                const getUserByEmail = await UserDb.getUserByEmail(mail);
 
-                const getUserByMail = ["jdoe@test.com", "manon@test.com"];
-
-                if (getUserByMail.includes(mail)) {
-                    console.log("L'adresse mail existe déjà");
-                    return res.status(400).json({ message: "L'adresse mail existe déjà." });
+                if (getUserByEmail) {
+                    return res.status(400).json({ message: "Cet email existe déjà" });
                 } else {
-                    console.log("L'adresse mail est disponible");
+                    console.log("L'email est disponible");
                 }
             } catch (error) {
                 console.error("Erreur lors de la vérification de l'email");
