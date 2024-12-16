@@ -5,14 +5,12 @@ import tools from '../functions.js';
 const UserController = {
     createUser: async (req, res) => {
         try {
-            const { pseudo, name, firstname, mail, password, passwordConfirm, avatar, user_state } = req.body;
+            const { pseudo, name, firstname, mail, password, passwordConfirm, avatar } = req.body;
 
             // Vérification de la validité des champs
             if (!pseudo || pseudo.trim().length < 2 || pseudo.trim().length > 24) {
                 return res.status(400).json({ message: "Le pseudo doit comprendre entre 2 et 24 caractères" });
             }
-
-            // TODO: Vérifier que le pseudo n'existe pas déjà (getUserByPseudo)
 
             const getUserByPseudo = await UserDb.getUserByPseudo(pseudo);
             if (getUserByPseudo && getUserByPseudo.length > 0) {
@@ -32,14 +30,6 @@ const UserController = {
             if (!tools.validateEmail(mail)) {
                 return res.status(400).json({ message: "L'email est invalide." });
             }
-
-            // Vérification du statut de l'utilisateur
-            if (user_state !== 'ACTIVE' && user_state !== 'ARCHIVED'){
-                return res.status(400).json({ message: "L'état de l'utilisateur doit être 'ACTIVE' ou 'ARCHIVED'" });
-            }
-
-
-            // TODO: Vérifier que l'adresse mail n'existe pas déjà (getUserByMail)
 
             const getUserByEmail = await UserDb.getUserByEmail(mail);
             if (getUserByEmail && getUserByEmail.length > 0) {
