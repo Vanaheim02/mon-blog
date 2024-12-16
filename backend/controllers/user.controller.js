@@ -53,21 +53,11 @@ const UserController = {
                 return res.status(400).json({ message: "Les mots de passe ne correspondent pas." });
             }
 
-            // Validation de l'état de l'utilisateur
-            const DEFAULT_USER_STATE = 'active';
-            const validStates = ['active', 'archived', 'deleted'];
-
-            if (user_state && !validStates.includes(user_state)) {
-                return res.status(400).json({ message: "L'état de l'utilisateur est invalide. Les états valides sont : 'active', 'archived', 'deleted'." });
-            }
-
-            const UserState = user_state || DEFAULT_USER_STATE;
-
             // Hashage du mot de passe
             const hashedPassword = await tools.hashPassword(password);
 
             // Création de l'utilisateur dans la base de données
-            const dbResponse = await UserDb.createUser(pseudo, name, firstname, mail, hashedPassword, avatar, UserState);
+            const dbResponse = await UserDb.createUser(pseudo, name, firstname, mail, hashedPassword, avatar);
             if (typeof dbResponse.error !== 'undefined') {
                 return res.status(400).json({ error: dbResponse.error });
             }
