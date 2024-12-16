@@ -1,6 +1,6 @@
-import ArticleDb from '../databases/article.db.js';
+import articleDb from '../databases/article.db.js';
 
-const ArticleController = {
+const articleController = {
     listArticle: async (req, res) => {
         try {
             const { article_name, article_id } = req.query;

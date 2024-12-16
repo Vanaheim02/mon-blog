@@ -1,6 +1,6 @@
 import db from './init.db.js';
 
-const ArticleDB = {
+const articleDb = {
 
     // Récupérer tous les articles
     async listArticle(article_name, article_id) {
@@ -105,12 +105,5 @@ const ArticleDB = {
         }
     },
 }
-// Article aimé / pas aimé
 
-export default ArticleDB;
-
-
-
-
-
-
+export default articleDb;

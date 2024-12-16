@@ -1,5 +1,5 @@
 import express from 'express';
-import ArticleController from '../controllers/article.controller.js';
+import articleController from '../controllers/article.controller.js';
 import bodyParser from 'body-parser';
 
 const jsonParser = bodyParser.json();
@@ -10,7 +10,7 @@ const initArticleRoutes = (app) => {
     // articleRouter.get('/', jsonParser, ArticleController.listArticle);
 
     // Route pour ajouter une nouvelle article
-    articleRouter.post('/add', jsonParser, ArticleController.addArticle);
+    articleRouter.post('/add', jsonParser, articleController.addArticle);
 
     // // Route pour mettre à jour un article
     // articleRouter.put('/update/:id', jsonParser, ArticleController.updateArticle);
