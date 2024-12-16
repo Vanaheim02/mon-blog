@@ -18,7 +18,6 @@ const UserDb = {
             return { error: error.message };
         }
     },
-
     getUserByPseudo: async (pseudo) => {
         const query = `SELECT user_id FROM user WHERE user_pseudo = ? AND user_state IN ('ACTIVE', 'ARCHIVED')`;
 
@@ -31,10 +30,7 @@ const UserDb = {
           }
           return { error: error.message };
         }
-      },
-
-
-
+    },
     getUserByEmail: async (email) => {
         const query = "SELECT user_id FROM user WHERE user_mail = ? AND user_state IN ('ACTIVE', 'ARCHIVED')";
 
@@ -48,8 +44,6 @@ const UserDb = {
             return {error: error.message}
         }
     }
-
-
 }
 
 
