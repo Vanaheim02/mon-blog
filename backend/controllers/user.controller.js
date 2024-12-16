@@ -5,7 +5,7 @@ import tools from '../functions.js';
 const UserController = {
     createUser: async (req, res) => {
         try {
-            const { pseudo, name, firstname, mail, password, passwordConfirm, avatar } = req.body;
+            const { pseudo, name, firstname, mail, password, passwordConfirm, avatar, user_state } = req.body;
 
             // Vérification de la validité des champs
             if (!pseudo || pseudo.trim().length < 2 || pseudo.trim().length > 24) {
@@ -13,16 +13,10 @@ const UserController = {
             }
 
             // TODO: Vérifier que le pseudo n'existe pas déjà (getUserByPseudo)
-            try {
-                const getUserByPseudo = await UserDb.getUserByPseudo(pseudo);
-                if (getUserByPseudo && getUserByPseudo.length > 0) {
-                    return res.status(400).json({ message: "Ce pseudo existe déjà" });
-                }
-            } catch (error) {
-                console.error("Erreur lors de la vérification du pseudo");
-                return res.status(500).json({
-                    error: error.message
-                });
+
+            const getUserByPseudo = await UserDb.getUserByPseudo(pseudo);
+            if (getUserByPseudo && getUserByPseudo.length > 0) {
+                return res.status(400).json({ message: "Ce pseudo existe déjà" });
             }
 
             // Vérification du nom et prénom
@@ -40,16 +34,10 @@ const UserController = {
             }
 
             // TODO: Vérifier que l'adresse mail n'existe pas déjà (getUserByMail)
-            try {
-                const getUserByEmail = await UserDb.getUserByEmail(mail);
-                if (getUserByEmail && getUserByEmail.length > 0) {
-                    return res.status(400).json({ message: "Cet adresse mail est déjà associé à un autre compte" });
-                }
-            } catch (error) {
-                console.error("Erreur lors de la vérification de l'email");
-                return res.status(500).json({
-                    error: error.message
-                });
+
+            const getUserByEmail = await UserDb.getUserByEmail(mail);
+            if (getUserByEmail && getUserByEmail.length > 0) {
+                return res.status(400).json({ message: "Cet adresse mail est déjà associé à un autre compte" });
             }
 
             // Vérification du mot de passe
@@ -65,11 +53,21 @@ const UserController = {
                 return res.status(400).json({ message: "Les mots de passe ne correspondent pas." });
             }
 
+            // Validation de l'état de l'utilisateur
+            const DEFAULT_USER_STATE = 'active';
+            const validStates = ['active', 'archived', 'deleted'];
+
+            if (user_state && !validStates.includes(user_state)) {
+                return res.status(400).json({ message: "L'état de l'utilisateur est invalide. Les états valides sont : 'active', 'archived', 'deleted'." });
+            }
+
+            const UserState = user_state || DEFAULT_USER_STATE;
+
             // Hashage du mot de passe
             const hashedPassword = await tools.hashPassword(password);
 
             // Création de l'utilisateur dans la base de données
-            const dbResponse = await UserDb.createUser(pseudo, name, firstname, mail, hashedPassword, avatar);
+            const dbResponse = await UserDb.createUser(pseudo, name, firstname, mail, hashedPassword, avatar, UserState);
             if (typeof dbResponse.error !== 'undefined') {
                 return res.status(400).json({ error: dbResponse.error });
             }

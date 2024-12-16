@@ -23,7 +23,7 @@ const UserDb = {
         const query = `SELECT user_id FROM user WHERE user_pseudo = ?`;
 
         try {
-          const [result] = await db.pool.query(query, [pseudo]);
+          const [result] = await db.poolQuery(query, [pseudo]);
           return result;
         } catch (error) {
           if (process.env.APP_ENV === 'dev') {
@@ -45,7 +45,7 @@ const UserDb = {
             if (process.env.APP_ENV === 'dev') {
                 console.error(error.stack);
             }
-            throw new Error("Erreur lors de la vérification de l'email");
+            return {error: error.message}
         }
     }
 
