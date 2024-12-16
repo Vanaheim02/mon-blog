@@ -33,6 +33,12 @@ const UserController = {
                 return res.status(400).json({ message: "L'email est invalide." });
             }
 
+            // Vérification du statut de l'utilisateur
+            if (user_state !== 'ACTIVE' && user_state !== 'ARCHIVED'){
+                return res.status(400).json({ message: "L'état de l'utilisateur doit être 'ACTIVE' ou 'ARCHIVED'" });
+            }
+
+
             // TODO: Vérifier que l'adresse mail n'existe pas déjà (getUserByMail)
 
             const getUserByEmail = await UserDb.getUserByEmail(mail);

@@ -20,7 +20,7 @@ const UserDb = {
     },
 
     getUserByPseudo: async (pseudo) => {
-        const query = `SELECT user_id FROM user WHERE user_pseudo = ?`;
+        const query = `SELECT user_id FROM user WHERE user_pseudo = ? AND user_state IN ('ACTIVE', 'ARCHIVED')`;
 
         try {
           const [result] = await db.poolQuery(query, [pseudo]);
@@ -36,7 +36,7 @@ const UserDb = {
 
 
     getUserByEmail: async (email) => {
-        const query = "SELECT user_id FROM user WHERE user_mail = ?";
+        const query = "SELECT user_id FROM user WHERE user_mail = ? AND user_state IN ('ACTIVE', 'ARCHIVED')";
 
         try {
             const [result] = await db.poolQuery(query, [email]);

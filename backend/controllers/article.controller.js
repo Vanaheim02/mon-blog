@@ -17,21 +17,31 @@ const ArticleController = {
         }
     },
 
+    // Ajout de l'article
     addArticle: async (req, res) => {
-        const { article_name, article_content, fk_article_category_id, fk_profile_id, article_state } = req.body;
+    const {article_name, article_content, fk_article_id, fk_user_id, article_state,fk_category_id } = req.body;
 
-        if (!article_name || !article_content || !fk_article_category_id || !fk_profile_id || !article_state) {
-            return res.status(400).json({ error: "Tous les champs sont requis." });
+    if (!article_name || !article_content || !fk_article_id || !fk_user_id || !article_state|| fk_category_id ) {
+        return res.status(400).json({ error: "Tous les champs sont requis." });
+    }
+
+    try {
+        const result = await ArticleDb.addArticle();
+        if (result.error) {
+            return res.status(500).json({ error: "Erreur lors de l'ajout de l'article." });
         }
 
-        try {
-            const result = await ArticleDb.addArticle(article_name, article_content, fk_article_category_id, fk_profile_id, article_state);
-            res.status(201).json({ message: "Article ajouté avec succès" });
-        } catch (error) {
-            console.error("Erreur lors de l'ajout de l'article");
-            res.status(500).json({ error: "Erreur lors de l'ajout de l'article." });
+        res.status(201).json({ message: "Article ajouté avec succès." });
+
+    } catch (error) {
+
+        if (process.env.APP_ENV === 'dev') {
+            console.error("Erreur lors de l'ajout de l'article:", error.stack);
         }
-    },
+        res.status(500).json({ error: "Erreur interne lors de l'ajout de l'article." });
+    }
+},
+
 
     getArticleById: async (req, res) => {
         const id_article = req.params.id;
