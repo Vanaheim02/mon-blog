@@ -1,6 +1,6 @@
 import ArticleDb from '../databases/article.db.js';
 
-const ArticleController = {
+const articleController = {
     listArticle: async (req, res) => {
         try {
             const { article_name, article_id } = req.query;
@@ -19,7 +19,6 @@ const ArticleController = {
 
     // Ajout de l'article
     addArticle: async (req, res) => {
-        console.log("Entrée dans la fonction addArticle");
 
         const { article_name, article_content, fk_user_id, article_state } = req.body;
 
@@ -36,7 +35,7 @@ const ArticleController = {
         const result = await ArticleDb.addArticle(article_name, article_content, fk_user_id, article_state);
 
         if (result.error) {
-            console.log("Erreur d'ajout d'article:", result.error);
+            console.log("Erreur d'ajout d'article:");
             return res.status(500).json({ message: "Une erreur est survenue lors de l'ajout de l'article." });
         }
 
@@ -182,4 +181,4 @@ const ArticleController = {
     // }
 
 
-export default ArticleController;
+export default articleController;

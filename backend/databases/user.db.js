@@ -21,7 +21,6 @@ const UserDb = {
             return { error: error.message };
         }
     },
-
     // Fonction pour récupérer un utilisateur par pseudo
     getUserByPseudo: async (pseudo) => {
         const query = `SELECT user_id FROM user WHERE user_pseudo = ? AND user_state IN (?)`;
@@ -36,9 +35,8 @@ const UserDb = {
             return { error: error.message };
         }
     },
-
-    // Fonction pour récupérer un utilisateur par email
-    getUserByEmail: async (email) => {
+     // Fonction pour récupérer un utilisateur par email
+     getUserByEmail: async (email) => {
         const query = `SELECT user_id FROM user WHERE user_mail = ? AND user_state IN (?)`;
 
         try {
@@ -51,7 +49,6 @@ const UserDb = {
             return { error: error.message };
         }
     },
-};
 
 
     // // Mise à jour de l'état de l'utilisateur
@@ -200,6 +197,6 @@ const UserDb = {
         return result;
     },
     */
-
+}
 
 export default UserDb;
