@@ -13,7 +13,9 @@ const initMiddlewares = (app) => {
         cookie: {
             secure: false
         }
+
     }));
+
 };
 
 export default initMiddlewares;

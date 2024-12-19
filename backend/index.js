@@ -7,6 +7,11 @@ import initMiddlewares from './middlewares/init.mdlwr.js';
 const app = express();
 const PORT = process.env.APP_PORT || 5000;
 
+app.use((req, res, next) => {
+    console.log(`[Requête reçue] Méthode: ${req.method}, URL: ${req.url}`);
+    console.log('Corps de la requête :', req.body);  // Affiche le corps de la requête pour vérifier ce qui est envoyé
+    next();  // Passe à la suite (les middlewares et routes)
+});
 
 // Initialisation des composants
 initMiddlewares(app);

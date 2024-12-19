@@ -1,0 +1,137 @@
+[33mcommit 7b362319f2e324110f3ab34fca6a9188cbdbdefb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelop[m[33m, [m[1;31morigin/develop[m[33m)[m
+Author: Manon Rouquette <mrouquette12110@gmail.com>
+Date:   Thu Dec 12 15:12:11 2024 +0100
+
+    todo
+
+[1mdiff --git a/backend/controllers/user.controller.js b/backend/controllers/user.controller.js[m
+[1mindex 6ecf8fd..797bad8 100644[m
+[1m--- a/backend/controllers/user.controller.js[m
+[1m+++ b/backend/controllers/user.controller.js[m
+[36m@@ -13,19 +13,20 @@[m [mconst UserController = {[m
+             }[m
+ [m
+             // TODO: Vérifier que le pseudo n'existe pas déjà (getUserByPseudo)[m
+[31m-            try {[m
+[31m-                const getUserByPseudo = ["creuvettedu12"];[m
+ [m
+[31m-                if (getUserByPseudo.includes(pseudo)) {[m
+[31m-                    console.log("Le pseudo existe déjà");[m
+[31m-                    return res.status(400).json({ message: "Ce pseudo existe déjà" });[m
+[31m-                } else {[m
+[31m-                    console.log("Le pseudo est disponible");[m
+[32m+[m[32m                try {[m
+[32m+[m[32m                    const getUserByPseudo = await UserDb.getUserByPseudo(pseudo);[m
+[32m+[m
+[32m+[m[32m                    if (getUserByPseudo) {[m
+[32m+[m[32m                        console.log("Ce pseudo existe déjà.");[m
+[32m+[m[32m                        return res.status(400).json({ message: "Ce pseudo existe déjà" });[m
+[32m+[m[32m                    } else {[m
+[32m+[m[32m                        console.log("Le pseudo est disponible");[m
+[32m+[m[32m                    }[m
+[32m+[m[32m                } catch (error) {[m
+[32m+[m[32m                    console.error("Erreur lors de la vérification du pseudo");[m
+[32m+[m[32m                    return res.status(500).json({ message: "Erreur lors de la vérification du pseudo"});[m
+                 }[m
+[31m-            } catch (error) {[m
+[31m-                console.error("Erreur lors de la vérification du pseudo");[m
+[31m-                return res.status(500).json({ message: "Erreur lors de la vérification du pseudo" });[m
+[31m-            }[m
+ [m
+             // Vérification du nom et prénom[m
+             if (!name || name.trim().length < 2) {[m
+[36m@@ -44,15 +45,12 @@[m [mconst UserController = {[m
+             // TODO: Vérifier que l'adresse mail n'existe pas déjà (getUserByMail)[m
+ [m
+             try {[m
+[31m-                console.log("Vérification de l'email:", mail);[m
+[31m-[m
+[31m-                const getUserByMail = ["jdoe@test.com", "manon@test.com"];[m
+[32m+[m[32m                const getUserByEmail = await UserDb.getUserByEmail(mail);[m
+ [m
+[31m-                if (getUserByMail.includes(mail)) {[m
+[31m-                    console.log("L'adresse mail existe déjà");[m
+[31m-                    return res.status(400).json({ message: "L'adresse mail existe déjà." });[m
+[32m+[m[32m                if (getUserByEmail) {[m
+[32m+[m[32m                    return res.status(400).json({ message: "Cet email existe déjà" });[m
+                 } else {[m
+[31m-                    console.log("L'adresse mail est disponible");[m
+[32m+[m[32m                    console.log("L'email est disponible");[m
+                 }[m
+             } catch (error) {[m
+                 console.error("Erreur lors de la vérification de l'email");[m
+[1mdiff --git a/backend/databases/user.db.js b/backend/databases/user.db.js[m
+[1mindex 51477d8..8cc9a68 100644[m
+[1m--- a/backend/databases/user.db.js[m
+[1m+++ b/backend/databases/user.db.js[m
+[36m@@ -1,6 +1,7 @@[m
+ import db from './init.db.js';[m
+ [m
+ const UserDb = {[m
+[32m+[m[32m    // Fonction pour créer un utilisateur[m
+     createUser: async (user_pseudo, user_firstname, user_name, user_mail, user_password) => {[m
+         const query = `[m
+             INSERT INTO user (user_pseudo, user_name, user_firstname, user_mail, user_password, user_state, user_date_in)[m
+[36m@@ -11,14 +12,52 @@[m [mconst UserDb = {[m
+             const [result] = await db.poolQuery(query, [user_pseudo, user_firstname, user_name, user_mail, user_password, db.ACTIVE]);[m
+             return result;[m
+         } catch (error) {[m
+[31m-            if (process.env.APP_ENV == 'dev')[m
+[32m+[m[32m            if (process.env.APP_ENV === 'dev') {[m
+                 console.error(error.stack);[m
+[31m-[m
+[32m+[m[32m            }[m
+             return { error: error.message };[m
+         }[m
+[32m+[m[32m    },[m
+[32m+[m
+[32m+[m[32m    getUserByPseudo: async (pseudo) => {[m
+[32m+[m[32m        const query =[m
+[32m+[m[32m              "SELECT user_id FROM user WHERE user_pseudo = ?";[m
+[32m+[m
+[32m+[m[32m        try {[m
+[32m+[m[32m            const [result] = await db.poolQuery(query, [pseudo]);[m
+[32m+[m
+[32m+[m[32m            if (Array.isArray(result) && result.length > 0) {[m
+[32m+[m[32m                console.log("Le pseudo existe déjà.");[m
+[32m+[m[32m                return true;[m
+[32m+[m[32m            } else {[m
+[32m+[m[32m                console.log("Le pseudo est disponible.");[m
+[32m+[m[32m                return false;[m
+[32m+[m[32m            }[m
+[32m+[m[32m        } catch (error) {[m
+[32m+[m[32m            console.error("Erreur lors de la vérification du pseudo:");[m
+[32m+[m[32m            throw new Error("Erreur lors de la vérification du pseudo");[m
+[32m+[m[32m        }[m
+[32m+[m[32m    },[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    getUserByEmail: async (email) => {[m
+[32m+[m[32m        const query =[m
+[32m+[m[32m        "SELECT user_id FROM user WHERE user_mail = ?";[m
+[32m+[m
+[32m+[m[32m        try {[m
+[32m+[m[32m            const [result] = await db.poolQuery(query, [email]);[m
+[32m+[m[32m            if (Array.isArray(result) && result.length > 0) {return true;[m
+[32m+[m[32m            } else {[m
+[32m+[m[32m                return false;[m
+[32m+[m[32m            }[m
+[32m+[m[32m        } catch (error) {[m
+[32m+[m[32m            console.error("Erreur lors de la vérification de l'email:");[m
+[32m+[m[32m            throw new Error("Erreur lors de la vérification de l'email");[m
+[32m+[m[32m        }[m
+     }[m
+ [m
+ [m
+[32m+[m[32m}[m
+ [m
+ [m
+     // // Mise à jour de l'état de l'utilisateur[m
+[36m@@ -167,6 +206,6 @@[m [mconst UserDb = {[m
+         return result;[m
+     },[m
+     */[m
+[31m-};[m
+[32m+[m
+ [m
+ export default UserDb;[m

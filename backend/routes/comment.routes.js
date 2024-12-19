@@ -1,36 +1,28 @@
 import express from 'express';
-import { CommentController } from '../controllers/comment.controller.js';
+import CommentController from '../controllers/comment.controller.js'
+import bodyParser from 'body-parser';
 
+
+
+const jsonParser = bodyParser.json()
 const commentRouter = express.Router();
+
 
 const initCommentRoutes = (app) => {
     // Route pour récupérer tous les commentaires
-    commentRouter.get('/', express.json(), CommentController.getAllComments);
+   // commentRouter.get('/', jsonParser, CommentController.getAllComments);
 
     // Route pour ajouter un nouveau commentaire
-    commentRouter.post('/add', express.json(), CommentController.createComment);
+    commentRouter.post('/add', jsonParser, CommentController.addComment)
 
     // Route pour récupérer un commentaire par son ID
-    commentRouter.get('/read/:id', express.json(), CommentController.getCommentById);
+   // commentRouter.get('/read/:id', jsonParser, CommentController.getCommentById);
 
     // Route pour mettre à jour un commentaire
-    commentRouter.put('/update/:id', express.json(), CommentController.updateComment);
+   // commentRouter.put('/update/:id', jsonParser, CommentController.updateComment);
 
     // Route pour supprimer un commentaire
-    commentRouter.delete('/delete/:id', express.json(), CommentController.deleteComment);
-
-    // Route pour récupérer tous les commentaires d'un article
-    commentRouter.get('/article/:article_id', express.json(), CommentController.getCommentsByArticle);
-
-    // Route pour récupérer tous les commentaires d'un utilisateur
-    commentRouter.get('/user/:id_user', express.json(), CommentController.getCommentsByUser);
-
-    // Route pour la pagination des commentaires
-    commentRouter.get('/pagination', express.json(), CommentController.paginateComments);
-
-    // Route pour ajouter un like à un commentaire
-    commentRouter.post('/like/:id', express.json(), CommentController.likeComment);
-
+   // commentRouter.delete('/delete/:id',jsonParser, CommentController.deleteComment);
 
     app.use('/comment', commentRouter);
 };

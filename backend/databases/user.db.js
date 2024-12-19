@@ -1,5 +1,8 @@
 import db from './init.db.js';
 
+
+const USER_STATES = ['ACTIVE', 'ARCHIVED'];
+
 const UserDb = {
     // Fonction pour créer un utilisateur
     createUser: async (user_pseudo, user_firstname, user_name, user_mail, user_password) => {
@@ -9,7 +12,7 @@ const UserDb = {
         `;
 
         try {
-            const [result] = await db.poolQuery(query, [user_pseudo, user_firstname, user_name, user_mail, user_password, db.ACTIVE]);
+            const [result] = await db.poolQuery(query, [user_pseudo, user_firstname, user_name, user_mail, user_password, USER_STATES]);
             return result;
         } catch (error) {
             if (process.env.APP_ENV === 'dev') {
@@ -19,38 +22,36 @@ const UserDb = {
         }
     },
 
+    // Fonction pour récupérer un utilisateur par pseudo
     getUserByPseudo: async (pseudo) => {
-        const query = `SELECT user_id FROM user WHERE user_pseudo = ? AND user_state IN ('ACTIVE', 'ARCHIVED')`;
+        const query = `SELECT user_id FROM user WHERE user_pseudo = ? AND user_state IN (?)`;
 
         try {
-          const [result] = await db.poolQuery(query, [pseudo]);
-          return result;
-        } catch (error) {
-          if (process.env.APP_ENV === 'dev') {
-            console.error(error.stack);
-          }
-          return { error: error.message };
-        }
-      },
-
-
-
-    getUserByEmail: async (email) => {
-        const query = "SELECT user_id FROM user WHERE user_mail = ? AND user_state IN ('ACTIVE', 'ARCHIVED')";
-
-        try {
-            const [result] = await db.poolQuery(query, [email]);
+            const [result] = await db.poolQuery(query, [pseudo, USER_STATES]);
             return result;
         } catch (error) {
             if (process.env.APP_ENV === 'dev') {
                 console.error(error.stack);
             }
-            return {error: error.message}
+            return { error: error.message };
         }
-    }
+    },
 
+    // Fonction pour récupérer un utilisateur par email
+    getUserByEmail: async (email) => {
+        const query = `SELECT user_id FROM user WHERE user_mail = ? AND user_state IN (?)`;
 
-}
+        try {
+            const [result] = await db.poolQuery(query, [email, USER_STATES]);
+            return result;
+        } catch (error) {
+            if (process.env.APP_ENV === 'dev') {
+                console.error(error.stack);
+            }
+            return { error: error.message };
+        }
+    },
+};
 
 
     // // Mise à jour de l'état de l'utilisateur

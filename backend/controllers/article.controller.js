@@ -19,28 +19,30 @@ const ArticleController = {
 
     // Ajout de l'article
     addArticle: async (req, res) => {
-    const {article_name, article_content, fk_article_id, fk_user_id, article_state,fk_category_id } = req.body;
+        console.log("Entrée dans la fonction addArticle");
 
-    if (!article_name || !article_content || !fk_article_id || !fk_user_id || !article_state|| fk_category_id ) {
-        return res.status(400).json({ error: "Tous les champs sont requis." });
-    }
+        const { article_name, article_content, fk_user_id, article_state } = req.body;
 
-    try {
-        const result = await ArticleDb.addArticle();
+
+        // Vérification des données
+        if (!article_name || article_name.trim().length < 2 || article_name.trim().length > 255) {
+            return res.status(400).json({ message: "Le nom de l'article doit comprendre entre 2 et 255 caractères." });
+        }
+
+        if (!article_content || article_content.trim().length < 10) {
+            return res.status(400).json({ message: "Le contenu de l'article doit comprendre au moins 10 caractères." });
+        }
+
+        const result = await ArticleDb.addArticle(article_name, article_content, fk_user_id, article_state);
+
         if (result.error) {
-            return res.status(500).json({ error: "Erreur lors de l'ajout de l'article." });
+            console.log("Erreur d'ajout d'article:", result.error);
+            return res.status(500).json({ message: "Une erreur est survenue lors de l'ajout de l'article." });
         }
 
-        res.status(201).json({ message: "Article ajouté avec succès." });
-
-    } catch (error) {
-
-        if (process.env.APP_ENV === 'dev') {
-            console.error("Erreur lors de l'ajout de l'article:", error.stack);
-        }
-        res.status(500).json({ error: "Erreur interne lors de l'ajout de l'article." });
-    }
-},
+        console.log("Article ajouté avec succès");
+        return res.status(201).json({ message: "Article ajouté avec succès." });
+    },
 
 
     getArticleById: async (req, res) => {
@@ -100,6 +102,9 @@ const ArticleController = {
             res.status(500).json({ error: "Erreur lors de la suppression de l'article." });
         }
     },
+};
+
+
 
     // // Pagination d'article
     // async listPaginationArticle(req, res) {
@@ -176,6 +181,5 @@ const ArticleController = {
     //     }
     // }
 
-}
 
 export default ArticleController;
